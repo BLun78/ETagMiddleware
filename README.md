@@ -1,11 +1,10 @@
 # ETagMiddleware
-ETag Middleware for Asp.Net Core 2.0<br>
-[![Build status](https://ci.appveyor.com/api/projects/status/x4k4x820ekocml5i/branch/master?svg=true)](https://ci.appveyor.com/project/BLun78/etagmiddleware/branch/master)
+ETag Middleware for Asp.Net Core 2.0
 
 ## Inspiration
 I was inspired by Mads Kristensen 
 [Blog](https://madskristensen.net/blog/send-etag-headers-in-aspnet-core/). The Example from him, can you find here as 
-[code](https://gist.github.com/madskristensen/36357b1df9ddbfd123162cd4201124c4).<br>
+[code](https://gist.github.com/madskristensen/36357b1df9ddbfd123162cd4201124c4).
 Thanks for your artikle!
 
 ## Requirements
