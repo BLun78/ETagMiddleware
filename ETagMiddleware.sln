@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
 VisualStudioVersion = 12.0.0.0
 MinimumVisualStudioVersion = 10.0.0.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ETagMiddleware", "ETagMiddleware/ETagMiddleware.csproj", "{18BD43AB-E383-49E5-B80A-A6D930EB7C78}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ETagMiddleware", "ETagMiddleware\ETagMiddleware.csproj", "{18BD43AB-E383-49E5-B80A-A6D930EB7C78}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MSTest", "MSTest\MSTest.csproj", "{BD64B80F-4223-4935-A4E3-B6063C516B88}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{18BD43AB-E383-49E5-B80A-A6D930EB7C78}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{18BD43AB-E383-49E5-B80A-A6D930EB7C78}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{18BD43AB-E383-49E5-B80A-A6D930EB7C78}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BD64B80F-4223-4935-A4E3-B6063C516B88}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BD64B80F-4223-4935-A4E3-B6063C516B88}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BD64B80F-4223-4935-A4E3-B6063C516B88}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BD64B80F-4223-4935-A4E3-B6063C516B88}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
