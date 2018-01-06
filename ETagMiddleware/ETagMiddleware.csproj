@@ -2,11 +2,37 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <LangVersion>7.1</LangVersion>
+    <RootNamespace>BLun.ETagMiddleware</RootNamespace>
+    <Description>ETag Middleware for Asp.Net Core MVC6 for .NetStandard 2.0</Description>
+    <PackOnBuild>true</PackOnBuild>
+    <PackageId>BLun.ETagMiddleware</PackageId>
+    <Title>BLun.ETagMiddleware</Title>
+    <PackageLicenseUrl>http://opensource.org/licenses/MIT</PackageLicenseUrl>
+    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+    <Authors>Björn Lundström (@github: BLun78)</Authors>
+    <RepositoryUrl>https://github.com/BLun78/ETagMiddleware.git</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageReleaseNotes>First release</PackageReleaseNotes>
+    <PackageTags>ETag If-None-Match AspNetCore MVC6 Middleware .NETStandard2.0</PackageTags>
+    <Copyright>Copyright 2017 (c) Björn Lundström, Germany. All rights reserved.</Copyright>
+    <PackageVersion>1.0.0</PackageVersion>
+    <PackageVersionPrefix>1.0.0</PackageVersionPrefix>
+    <PackageVersionSuffix></PackageVersionSuffix>
+    <Version>1.0.0</Version>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DocumentationFile>bin\Release\netstandard2.0\ETagMiddleware.xml</DocumentationFile>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DocumentationFile>bin\Debug\netstandard2.0\ETagMiddleware.xml</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="JetBrains.Annotations" Version="11.1.0" />
+    <PackageReference Include="JetBrains.Annotations" Version="11.1.0" >
+       <PrivateAssets>All</PrivateAssets>
+    </PackageReference>
     <PackageReference Include="Microsoft.AspNetCore.Http" Version="2.0.1" />
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="2.0.0" />
     <PackageReference Include="Microsoft.Extensions.Options" Version="2.0.0" />
+    <PackageReference Include="NuGet.Build.Packaging" Version="0.2.0" />
   </ItemGroup>
 </Project>

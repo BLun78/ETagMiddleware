@@ -10,7 +10,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Primitives;
 using Microsoft.Net.Http.Headers;
 
-namespace ETagMiddleware
+namespace BLun.ETagMiddleware
 {
     /// <summary>
     /// Enables ETag middleware for request
@@ -20,10 +20,10 @@ namespace ETagMiddleware
         private readonly RequestDelegate _next;
         private readonly long _bodyMaxLength;
         private readonly ILogger<ETagMiddleware> _logger;
-        private readonly ETagOption _options;
+            private readonly ETagOption _options;
 
         /// <summary>
-        /// Create a new instance of the ETagMiddleware
+        /// Initializes a new instance of the <see cref="T:BLun.ETagMiddleware.ETagMiddleware"/> class.
         /// </summary>
         /// <param name="next">The next middleware in the pipeline.</param>
         /// <param name="options">The configuration options.</param>
@@ -50,7 +50,7 @@ namespace ETagMiddleware
         /// </summary>
         /// <param name="context"></param>
         /// <returns></returns>
-        public async Task Invoke(HttpContext context)
+        public async Task Invoke([NotNull] HttpContext context)
         {
             var originalStream = context.Response.Body;
 
@@ -68,7 +68,7 @@ namespace ETagMiddleware
             }
         }
 
-        private void ManageEtag(HttpContext context, MemoryStream ms)
+        private void ManageEtag([NotNull] HttpContext context, [NotNull] MemoryStream ms)
         {
             if (IsEtagSupported(context))
             {
@@ -87,7 +87,7 @@ namespace ETagMiddleware
             }
         }
 
-        private bool IsEtagSupported(HttpContext context)
+        private bool IsEtagSupported([NotNull] HttpContext context)
         {
             if (context.Response.StatusCode != StatusCodes.Status200OK)
                 return false;
@@ -101,7 +101,7 @@ namespace ETagMiddleware
             return true;
         }
 
-        private string GetResponseHash(Stream inputStream)
+        private string GetResponseHash([NotNull] Stream inputStream)
         {
             using (var algo = SHA1.Create())
             {
@@ -111,7 +111,7 @@ namespace ETagMiddleware
             }
         }
 
-        private string GetAndAddETagToHeader(HttpContext context, MemoryStream ms)
+        private string GetAndAddETagToHeader([NotNull] HttpContext context, [NotNull] MemoryStream ms)
         {
             var etag = GetResponseHash(ms);
             context.Response.Headers[HeaderNames.ETag] = etag;

@@ -1,8 +1,14 @@
 ﻿
-namespace ETagMiddleware
+namespace BLun.ETagMiddleware
 {
+    /// <summary>
+    /// ETag option.
+    /// </summary>
     public class ETagOption
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="T:BLun.ETagMiddleware.ETagOption"/> class.
+        /// </summary>
         public ETagOption(){}
             
         /// <summary>

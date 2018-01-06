@@ -3,7 +3,7 @@ using JetBrains.Annotations;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Options;
 
-namespace ETagMiddleware
+namespace BLun.ETagMiddleware
 {
     /// <summary>
     /// Extension methods for the ETagMiddleware
@@ -44,7 +44,7 @@ namespace ETagMiddleware
             if (app == null) throw new ArgumentNullException(nameof(app));
             if (option == null) throw new ArgumentNullException(nameof(option));
 
-            return app.UseMiddleware<global::ETagMiddleware.ETagMiddleware>(Options.Create(option));
+            return app.UseMiddleware<global::BLun.ETagMiddleware.ETagMiddleware>(Options.Create(option));
         }
     }
 }
