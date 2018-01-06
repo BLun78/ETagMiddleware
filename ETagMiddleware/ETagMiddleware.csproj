@@ -13,6 +13,7 @@
     <RepositoryUrl>https://github.com/BLun78/ETagMiddleware.git</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageReleaseNotes>First release</PackageReleaseNotes>
+    <PackageProjectUrl>https://github.com/BLun78/ETagMiddleware</PackageProjectUrl>
     <PackageTags>ETag If-None-Match AspNetCore MVC6 Middleware .NETStandard2.0</PackageTags>
     <Copyright>Copyright 2018 (c) Björn Lundström, Germany. All rights reserved.</Copyright>
     <PackageVersion>1.0.0</PackageVersion>
