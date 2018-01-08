@@ -11,6 +11,7 @@ Thanks for your artikle!
 .NETStandard2.0
 
 ## Install
+Download from [Nuget.org](https://www.nuget.org/packages/BLun.ETagMiddleware/)
 ```json
 "dependencies": {
   "BLun.ETagMiddleware": "<version>"
