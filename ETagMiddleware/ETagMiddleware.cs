@@ -20,7 +20,7 @@ namespace BLun.ETagMiddleware
         private readonly RequestDelegate _next;
         private readonly long _bodyMaxLength;
         private readonly ILogger<ETagMiddleware> _logger;
-            private readonly ETagOption _options;
+        private readonly ETagOption _options;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="T:BLun.ETagMiddleware.ETagMiddleware"/> class.
@@ -101,7 +101,7 @@ namespace BLun.ETagMiddleware
             return true;
         }
 
-        private string GetResponseHash([NotNull] Stream inputStream)
+        private static string GetResponseHash([NotNull] Stream inputStream)
         {
             using (var algo = SHA1.Create())
             {

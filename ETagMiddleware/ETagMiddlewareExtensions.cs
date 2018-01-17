@@ -24,7 +24,7 @@ namespace BLun.ETagMiddleware
         public static IApplicationBuilder UseETag([NotNull] this IApplicationBuilder app)
         {
             if (app == null) throw new ArgumentNullException(nameof(app));
-
+       
             return UseETag(app, new ETagOption()
             {
                 BodyMaxLength = ETagMiddlewareExtensions.DefaultBodyMaxLength
