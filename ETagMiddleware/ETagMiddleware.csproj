@@ -8,19 +8,19 @@
     <PackageId>BLun.ETagMiddleware</PackageId>
     <Title>BLun.ETagMiddleware</Title>
     <PackageLicenseUrl>http://opensource.org/licenses/MIT</PackageLicenseUrl>
-    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <Authors>Björn Lundström (@github: BLun78)</Authors>
     <RepositoryUrl>https://github.com/BLun78/ETagMiddleware.git</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
-    <PackageReleaseNotes>First release</PackageReleaseNotes>
+    <PackageReleaseNotes>fix Dependecies</PackageReleaseNotes>
     <PackageProjectUrl>https://github.com/BLun78/ETagMiddleware</PackageProjectUrl>
     <PackageTags>ETag If-None-Match AspNetCore MVC6 Middleware .NETStandard2.0</PackageTags>
     <Copyright>Copyright 2018 (c) Björn Lundström, Germany. All rights reserved.</Copyright>
-    <PackageVersion>1.0.1</PackageVersion>
+    <PackageVersion>1.0.2</PackageVersion>
     <PackageVersionPrefix>1.0.1</PackageVersionPrefix>
     <PackageVersionSuffix>
     </PackageVersionSuffix>
     <Version>1.0.2</Version>
+    <Owners>@github: BLun78, Björn Lundström, Germany</Owners>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DocumentationFile>bin\Release\netstandard2.0\ETagMiddleware.xml</DocumentationFile>
