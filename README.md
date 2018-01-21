@@ -67,4 +67,4 @@ public void Configure(IApplicationBuilder app, IHostingEnvironment env)
 ```
 
 ## Vision
-I would develope mor Test for it.
+I would develope more Test for it.
