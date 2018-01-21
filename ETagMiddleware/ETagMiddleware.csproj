@@ -18,8 +18,9 @@
     <Copyright>Copyright 2018 (c) Björn Lundström, Germany. All rights reserved.</Copyright>
     <PackageVersion>1.0.1</PackageVersion>
     <PackageVersionPrefix>1.0.1</PackageVersionPrefix>
-    <PackageVersionSuffix></PackageVersionSuffix>
-    <Version>1.0.1</Version>
+    <PackageVersionSuffix>
+    </PackageVersionSuffix>
+    <Version>1.0.2</Version>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DocumentationFile>bin\Release\netstandard2.0\ETagMiddleware.xml</DocumentationFile>
@@ -28,12 +29,14 @@
     <DocumentationFile>bin\Debug\netstandard2.0\ETagMiddleware.xml</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="JetBrains.Annotations" Version="11.1.0" >
-       <PrivateAssets>All</PrivateAssets>
+    <PackageReference Include="JetBrains.Annotations" Version="11.1.0">
+      <PrivateAssets>All</PrivateAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.AspNetCore.Http" Version="2.0.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.0.1" />
+    <PackageReference Include="Microsoft.AspNetCore.WebUtilities" Version="2.0.1" />
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="2.0.0" />
     <PackageReference Include="Microsoft.Extensions.Options" Version="2.0.0" />
+    <PackageReference Include="Microsoft.Net.Http.Headers" Version="2.0.1" />
     <PackageReference Include="NuGet.Build.Packaging" Version="0.2.0" />
   </ItemGroup>
 </Project>
