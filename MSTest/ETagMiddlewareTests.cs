@@ -25,7 +25,7 @@ namespace ETagMiddlewareTest
 
             public long BodyMaxLength => this._bodyMaxLength;
             public ILogger<ETagMiddleware> Logger => this._logger;
-            public bool IsEtagSupported(HttpContext context) => base.IsEtagSupported(context);
+            public bool BaseIsEtagSupported(HttpContext context) => base.IsEtagSupported(context);
 
         }
 
@@ -161,7 +161,7 @@ namespace ETagMiddlewareTest
             context.Response.Returns(response);
 
             // act
-            var result = etag.IsEtagSupported(context);
+            var result = etag.BaseIsEtagSupported(context);
 
             // assert
             Assert.IsNotNull(etag.Logger);
@@ -190,7 +190,7 @@ namespace ETagMiddlewareTest
             context.Response.Returns(response);
 
             // act
-            var result = etag.IsEtagSupported(context);
+            var result = etag.BaseIsEtagSupported(context);
 
             // assert
             Assert.IsNotNull(etag.Logger);
@@ -219,7 +219,7 @@ namespace ETagMiddlewareTest
             context.Response.Returns(response);
 
             // act
-            var result = etag.IsEtagSupported(context);
+            var result = etag.BaseIsEtagSupported(context);
 
             // assert
             Assert.IsNotNull(etag.Logger);
@@ -248,7 +248,7 @@ namespace ETagMiddlewareTest
             context.Response.Returns(response);
 
             // act
-            var result = etag.IsEtagSupported(context);
+            var result = etag.BaseIsEtagSupported(context);
 
             // assert
             Assert.IsNotNull(etag.Logger);
@@ -277,13 +277,19 @@ namespace ETagMiddlewareTest
             context.Response.Returns(response);
 
             // act
-            var result = etag.IsEtagSupported(context);
+            var result = etag.BaseIsEtagSupported(context);
 
             // assert
             Assert.IsNotNull(etag.Logger);
             Assert.AreEqual(length, etag.BodyMaxLength);
             Assert.IsFalse(result);
         }
+
+        #endregion
+
+        #region s
+
+
 
         #endregion
 

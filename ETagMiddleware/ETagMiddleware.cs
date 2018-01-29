@@ -87,20 +87,6 @@ namespace BLun.ETagMiddleware
             }
         }
 
-        protected bool IsEtagSupported([NotNull] HttpContext context)
-        {
-            if (context.Response.StatusCode != StatusCodes.Status200OK)
-                return false;
-
-            if (context.Response.Body.Length > _bodyMaxLength)
-                return false;
-
-            if (context.Response.Headers.ContainsKey(HeaderNames.ETag))
-                return false;
-
-            return true;
-        }
-
         protected static string GetResponseHash([NotNull] Stream inputStream)
         {
             using (var algo = SHA1.Create())
@@ -117,6 +103,20 @@ namespace BLun.ETagMiddleware
             context.Response.Headers[HeaderNames.ETag] = etag;
             _logger.LogInformation($"Set to response strong ETag::[{etag}]");
             return etag;
+        }
+
+        protected bool IsEtagSupported([NotNull] HttpContext context)
+        {
+            if (context.Response.StatusCode != StatusCodes.Status200OK)
+                return false;
+
+            if (context.Response.Body.Length > _bodyMaxLength)
+                return false;
+
+            if (context.Response.Headers.ContainsKey(HeaderNames.ETag))
+                return false;
+
+            return true;
         }
     }
 }

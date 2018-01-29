@@ -19,7 +19,7 @@ namespace ETagMiddlewareTest
             // act
             app.UseETag();
 
-            // Assert
+            // assert
             app.Received().Use(Arg.Any<Func<RequestDelegate, RequestDelegate>>());
             Assert.IsNotNull(app);
         }
@@ -34,7 +34,7 @@ namespace ETagMiddlewareTest
             // act
             app.UseETag();
 
-            // Assert
+            // assert
             Assert.Fail("No Exception");
         }
 
@@ -47,7 +47,7 @@ namespace ETagMiddlewareTest
             // act
             app.UseETag(new ETagOption() { BodyMaxLength = ETagMiddlewareExtensions.DefaultBodyMaxLength });
 
-            // Assert
+            // assert
             app.Received().Use(Arg.Any<Func<RequestDelegate, RequestDelegate>>());
             Assert.IsNotNull(app);
         }
@@ -62,7 +62,7 @@ namespace ETagMiddlewareTest
             // act
             app.UseETag(null);
 
-            // Assert
+            // assert
             Assert.Fail("No Exception");
         }
 
@@ -76,7 +76,7 @@ namespace ETagMiddlewareTest
             // act
             app.UseETag(new ETagOption() { BodyMaxLength = ETagMiddlewareExtensions.DefaultBodyMaxLength });
 
-            // Assert
+            // assert
             Assert.Fail("No Exception");
         }
     }

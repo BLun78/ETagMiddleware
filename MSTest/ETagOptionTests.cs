@@ -16,7 +16,7 @@ namespace ETagMiddlewareTest
             // act
             option.BodyMaxLength = 1;
 
-            // Assert
+            // assert
             Assert.IsNotNull(option);
             Assert.AreEqual(1, option.BodyMaxLength);
         }
@@ -30,7 +30,7 @@ namespace ETagMiddlewareTest
             // act
             option.BodyMaxLength = ETagMiddlewareExtensions.DefaultBodyMaxLength;
 
-            // Assert
+            // assert
             Assert.IsNotNull(option);
             Assert.AreEqual(ETagMiddlewareExtensions.DefaultBodyMaxLength, option.BodyMaxLength);
         }
