@@ -26,7 +26,7 @@ namespace ETagMiddlewareTest
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentNullException), "app")]
-        public void UseETag_With_NullApp_Without_Param_Ok()
+        public void UseETag_With_NullApp_Without_Param_NOk()
         {
             // arange
             IApplicationBuilder app = null;
@@ -54,7 +54,7 @@ namespace ETagMiddlewareTest
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentNullException), "option")]
-        public void UseETag_With_Null_Param_Ok()
+        public void UseETag_With_Null_Param_NOk()
         {
             // arange
             var app = Substitute.For<IApplicationBuilder>();
@@ -68,7 +68,7 @@ namespace ETagMiddlewareTest
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentNullException), "app")]
-        public void UseETag_With_NullApp_With_Param_Ok()
+        public void UseETag_With_NullApp_With_Param_NOk()
         {
             // arange
             IApplicationBuilder app = null;

@@ -17,10 +17,10 @@ namespace BLun.ETagMiddleware
     /// </summary>
     public class ETagMiddleware
     {
-        private readonly RequestDelegate _next;
-        private readonly long _bodyMaxLength;
-        private readonly ILogger<ETagMiddleware> _logger;
-        private readonly ETagOption _options;
+        protected readonly RequestDelegate _next;
+        protected readonly long _bodyMaxLength;
+        protected readonly ILogger<ETagMiddleware> _logger;
+        protected readonly ETagOption _options;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="T:BLun.ETagMiddleware.ETagMiddleware"/> class.
@@ -68,7 +68,7 @@ namespace BLun.ETagMiddleware
             }
         }
 
-        private void ManageEtag([NotNull] HttpContext context, [NotNull] MemoryStream ms)
+        protected void ManageEtag([NotNull] HttpContext context, [NotNull] MemoryStream ms)
         {
             if (IsEtagSupported(context))
             {
@@ -87,7 +87,7 @@ namespace BLun.ETagMiddleware
             }
         }
 
-        private bool IsEtagSupported([NotNull] HttpContext context)
+        protected bool IsEtagSupported([NotNull] HttpContext context)
         {
             if (context.Response.StatusCode != StatusCodes.Status200OK)
                 return false;
@@ -101,7 +101,7 @@ namespace BLun.ETagMiddleware
             return true;
         }
 
-        private static string GetResponseHash([NotNull] Stream inputStream)
+        protected static string GetResponseHash([NotNull] Stream inputStream)
         {
             using (var algo = SHA1.Create())
             {
@@ -111,7 +111,7 @@ namespace BLun.ETagMiddleware
             }
         }
 
-        private string GetAndAddETagToHeader([NotNull] HttpContext context, [NotNull] MemoryStream ms)
+        protected string GetAndAddETagToHeader([NotNull] HttpContext context, [NotNull] MemoryStream ms)
         {
             var etag = GetResponseHash(ms);
             context.Response.Headers[HeaderNames.ETag] = etag;

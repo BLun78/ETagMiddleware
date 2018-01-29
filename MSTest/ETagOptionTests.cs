@@ -8,7 +8,7 @@ namespace ETagMiddlewareTest
     public class ETagOptionTests
     {
         [TestMethod]
-        public void Create_And_Check_Value()
+        public void Create_And_Check_Value_Ok()
         {
             // arange
             var option = new ETagOption();
@@ -22,7 +22,7 @@ namespace ETagMiddlewareTest
         }
 
         [TestMethod]
-        public void Create_And_Check_Value2()
+        public void Create_And_Check_Value2_Ok()
         {
             // arange
             var option = new ETagOption();
