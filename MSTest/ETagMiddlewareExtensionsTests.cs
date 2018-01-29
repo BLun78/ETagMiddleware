@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;
 
-namespace MSTest
+namespace ETagMiddlewareTest
 {
     [TestClass]
     public class ETagMiddlewareExtensionsTests
