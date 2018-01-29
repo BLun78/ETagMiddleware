@@ -12,20 +12,32 @@ namespace ETagMiddlewareTest
     public class ETagMiddlewareTests
     {
 
-        internal class TestETagMiddleware : ETagMiddleware{
-            
+        internal class TestETagMiddleware : ETagMiddleware
+        {
+
             public TestETagMiddleware(RequestDelegate next,
                                       IOptions<ETagOption> options,
                                       ILoggerFactory loggerFactory)
-                   : base(next,options,loggerFactory)
+                   : base(next, options, loggerFactory)
             {
             }
 
             public long BodyMaxLength => this._bodyMaxLength;
-
+            public ILogger<ETagMiddleware> Logger => this._logger;
 
         }
 
+        internal ILoggerFactory CreateILoggerFactory()
+        {
+            var loggerFactory = Substitute.For<ILoggerFactory>();
+            var logger = Substitute.For<ILogger<ETagMiddleware>>();
+
+            loggerFactory.CreateLogger<ETagMiddleware>().Returns(logger);
+
+            return loggerFactory;
+        }
+
+        #region Ctor Tests
         [TestMethod]
         [ExpectedException(typeof(ArgumentNullException), "next")]
         public void Create_And_Check_Ctor_Exceptions_Next_NOk()
@@ -65,7 +77,7 @@ namespace ETagMiddlewareTest
 
             // Assert
             Assert.AreNotEqual(length, etag.BodyMaxLength);
-            Assert.AreEqual(ETagMiddlewareExtensions.DefaultBodyMaxLength,etag.BodyMaxLength);
+            Assert.AreEqual(ETagMiddlewareExtensions.DefaultBodyMaxLength, etag.BodyMaxLength);
         }
 
         [TestMethod]
@@ -97,9 +109,30 @@ namespace ETagMiddlewareTest
             var etag = new ETagMiddleware(Substitute.For<RequestDelegate>(),
                                           options,
                                           null);
-                                          
+
             // Assert
             Assert.Fail("No Exception");
         }
+
+
+        [TestMethod]
+        public void Create_Check_Ctor_Created_Types_Ok()
+        {
+            // arange
+            long length = 100;
+            ETagOption etagOption = new ETagOption() { BodyMaxLength = length };
+            IOptions<ETagOption> options = Options.Create(etagOption);
+
+            // act
+            var etag = new TestETagMiddleware(Substitute.For<RequestDelegate>(),
+                                          options,
+                                          CreateILoggerFactory());
+
+            // Assert
+            Assert.IsNotNull(etag.Logger);
+            Assert.AreEqual(length, etag.BodyMaxLength);
+        }
+        #endregion
+
     }
 }
