@@ -65,6 +65,9 @@ public void Configure(IApplicationBuilder app, IHostingEnvironment env)
     });
 }
 ```
+## Unittested
+The Code is unittestet.
 
 ## Vision
-I would develope more test for it.
+I would develope muche more test for it.
+Add more features for Cache-Controle-Dirictives with ETag.
