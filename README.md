@@ -1,5 +1,5 @@
 # ETagMiddleware
-ETag Middleware for Asp.Net Core 2.0
+(ETag)[https://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.19] Middleware for (Asp.Net Core -.NetStandard 2.0)[https://docs.microsoft.com/aspnet/core/]
 
 ## Inspiration
 I was inspired by Mads Kristensen 
@@ -51,10 +51,18 @@ public void Configure(IApplicationBuilder app, IHostingEnvironment env)
     
     // Add a Middleware for each Controller Request
     // Atention: add app.UseETag after app.UseStaticFiles, the order is important
-    // Set the BodyMaxLength to 30 KB
     app.UseETag(app, new ETagOption()
         {
-            BodyMaxLength = 30 * 1024
+
+            // Set the BodyMaxLength to 30 KB (Http Body)
+            BodyMaxLength = 30 * 1024,
+            // algorithmus
+            // SHA1 = default   | strong ETag
+            // SHA265           | strong ETag
+            // SHA384           | strong ETag
+            // SHA512           | strong ETag
+            // MD5              | weak ETag
+            ETagAlgorithm = ETagAlgorithm.StrongSHA1
         });
 
     app.UseMvc(routes =>

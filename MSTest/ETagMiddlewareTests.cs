@@ -25,8 +25,9 @@ namespace ETagMiddlewareTest
 
             public long BodyMaxLength => this._bodyMaxLength;
             public ILogger<ETagMiddleware> Logger => this._logger;
-            public bool BaseIsEtagSupported(HttpContext context) => base.IsEtagSupported(context);
-
+            public bool BaseIsEtagSupported(HttpContext context) => base.IsEtagSupportedOrNeeded(context);
+            public void BaseAddEtagToHeader(HttpContext context, string etag) => base.AddEtagToHeader(context, etag);
+            public string BaseClean(string etag) => base.Clean(etag);
         }
 
         internal ILoggerFactory CreateILoggerFactory()
@@ -287,9 +288,59 @@ namespace ETagMiddlewareTest
 
         #endregion
 
-        #region s
+        #region AddEtagToHeader Tests
 
+        [TestMethod]
+        public void AddEtagToHeader_Ok()
+        {
+            // arange
+            var etagString = "HalloWeltEtag";
+            long length = 100;
+            ETagOption etagOption = new ETagOption() { BodyMaxLength = length };
+            IOptions<ETagOption> options = Options.Create(etagOption);
+            var etag = new TestETagMiddleware(Substitute.For<RequestDelegate>(),
+                                          options,
+                                          CreateILoggerFactory());
 
+            var response = Substitute.For<HttpResponse>();
+            response.Body.Returns(Substitute.For<Stream>());
+            response.Body.Length.ReturnsForAnyArgs(length);
+            response.StatusCode.Returns<int>(200);
+            response.Headers.ContainsKey(HeaderNames.ETag).ReturnsForAnyArgs(false);
+
+            var context = Substitute.For<HttpContext>();
+            context.Response.Returns(response);
+
+            // act
+            etag.BaseAddEtagToHeader(context, "HalloWeltEtag");
+
+            // assert
+            Assert.IsNotNull(etag.Logger);
+            Assert.AreEqual(length, etag.BodyMaxLength);
+            context.Response.Headers.Received().Add(HeaderNames.ETag, etagString);
+        }
+
+        #endregion
+
+        #region Clean
+
+        [TestMethod]
+        public void Clean_Ok()
+        {
+            // arange
+            long length = 0;
+            ETagOption etagOption = new ETagOption() { BodyMaxLength = length };
+            IOptions<ETagOption> options = Options.Create(etagOption);
+            var etag = new TestETagMiddleware(Substitute.For<RequestDelegate>(), options, Substitute.For<ILoggerFactory>());
+            var testString = "He\"ll\"o";
+            var expected = "Hello";
+
+            // act
+            var result = etag.BaseClean(testString);
+
+            // assert
+            Assert.AreEqual(expected, result);
+        }
 
         #endregion
 

@@ -14,7 +14,7 @@ namespace BLun.ETagMiddleware
         /// Default max Body length for Etag
         /// </summary>
         public static long DefaultBodyMaxLength => 40 * 1024;
-        
+
         /// <summary>
         /// Enable Etag handshake
         /// </summary>
@@ -24,13 +24,14 @@ namespace BLun.ETagMiddleware
         public static IApplicationBuilder UseETag([NotNull] this IApplicationBuilder app)
         {
             if (app == null) throw new ArgumentNullException(nameof(app));
-       
+
             return UseETag(app, new ETagOption()
             {
-                BodyMaxLength = ETagMiddlewareExtensions.DefaultBodyMaxLength
+                BodyMaxLength = ETagMiddlewareExtensions.DefaultBodyMaxLength,
+                ETagAlgorithm = ETagAlgorithm.StrongSHA1
             });
         }
-        
+
         /// <summary>
         /// Enable Etag handshake with given option
         /// </summary>

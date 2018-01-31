@@ -15,5 +15,7 @@ namespace BLun.ETagMiddleware
         /// max Body length for Etag
         /// </summary>
         public long BodyMaxLength { get; set; }
+
+        public ETagAlgorithm ETagAlgorithm { get; set; }
     }
 }
