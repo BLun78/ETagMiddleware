@@ -1,5 +1,5 @@
 # ETagMiddleware
-(ETag)[https://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.19] Middleware for (Asp.Net Core -.NetStandard 2.0)[https://docs.microsoft.com/aspnet/core/]
+[ETag](https://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.19) Middleware for [Asp.Net Core -.NetStandard 2.0](https://docs.microsoft.com/aspnet/core/)
 
 ## Inspiration
 I was inspired by Mads Kristensen 
