@@ -107,7 +107,7 @@ namespace BLun.ETagMiddleware
         protected void CheckETagAndSetHttpStatusCode(HttpContext context, StringValues requestEtag, string etag)
         {
             if (!string.IsNullOrWhiteSpace(etag)
-                &&  Clean(requestEtag) == Clean(etag))
+                && Clean(requestEtag) == Clean(etag))
             {
                 _logger.LogInformation($"Response StatusCode is set to 304 (If-None-Match == ETag [{etag}])");
                 context.Response.StatusCode = StatusCodes.Status304NotModified;
