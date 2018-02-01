@@ -18,9 +18,87 @@ Download from [Nuget.org](https://www.nuget.org/packages/BLun.ETagMiddleware/)
 }
 ```
 
-## Usage
+## Featurs
+ - BLun.ETagMiddleware for Asp.Net Core Http
+    - Microsoft.AspNetCore.Http.IMiddleware
+ - BLun.ETagAttribute for Asp.Net Core Mvc
+    - Microsoft.AspNetCore.Mvc.Filters.IAsyncActionFilter
+ - Supports 
+    - Microsoft.Extensions.Logging
+    - Microsoft.Extensions.DependencyInjection
+    - Microsoft.Extensions.Options (Configuration)
+
+
+## Usage as Middleware (Microsoft.AspNetCore.Http.IMiddleware)
+
 The default usage are:
 ```c# 
+using BLun.ETagMiddleware;
+
+// This method gets called by the runtime. Use this method to add services to the container.
+public void ConfigureServices(IServiceCollection services)
+{
+    services.AddMvc();
+
+    // Required
+    // Add a Middleware for each Controller Request with
+    // algorithmus          = SHA1      = default
+    // etag validator       = Strong    = default
+    // body content length  = 40 * 1024 = default
+    services.AddETag();
+}
+
+// Add "app.UseETag();" to "Configure" method in Startup.cs
+public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+{
+    app.UseStaticFiles();
+    
+    // Add a Middleware for each Controller Request
+    // Atention: add app.UseETag after app.UseStaticFiles, the order is important for performance
+    app.UseETag();
+
+    app.UseMvc(routes =>
+    {
+        routes.MapRoute(
+            name: "default",
+            template: "{controller=Home}/{action=Index}/{id?}");
+    });
+}
+```
+
+You can configuratione your own option prameters:
+
+```c# 
+using BLun.ETagMiddleware;
+
+// This method gets called by the runtime. Use this method to add services to the container.
+public void ConfigureServices(IServiceCollection services)
+{
+    services.AddMvc();
+
+    // Required
+    // Add ETagOption with own global configurations
+    services.AddETag(new ETagOption()
+    {
+        // algorithmus
+        // SHA1         = default
+        // SHA265
+        // SHA384
+        // SHA512
+        // MD5
+        ETagAlgorithm = ETagAlgorithm.SHA265,
+
+        // etag validator
+        // Strong       = default
+        // Weak
+        ETagValidator = ETagValidator.Weak,
+
+        // body content length
+        // 40 * 1024    = default
+        BodyMaxLength = 20 * 1024
+    });
+}
+
 // Add "app.UseETag();" to "Configure" method in Startup.cs
 public void Configure(IApplicationBuilder app, IHostingEnvironment env)
 {
@@ -39,31 +117,48 @@ public void Configure(IApplicationBuilder app, IHostingEnvironment env)
 }
 ```
 
-You can configuratione the BodyMaxLength for the Body wich would be hashed for an ETag.
-The default is 40 * 1024 = 40 KB
+## Usage as ETagAttribute (Microsoft.AspNetCore.Mvc.Filters.IAsyncActionFilter)
 
-The default usage are:
 ```c# 
+using BLun.ETagMiddleware;
+
+// This method gets called by the runtime. Use this method to add services to the container.
+public void ConfigureServices(IServiceCollection services)
+{
+    services.AddMvc();
+
+    // Add ETagOption with own global configurations
+    services.AddETag(new ETagOption()
+    {
+        // algorithmus
+        // SHA1         = default
+        // SHA265
+        // SHA384
+        // SHA512
+        // MD5
+        ETagAlgorithm = ETagAlgorithm.SHA265,
+
+        // etag validator
+        // Strong       = default
+        // Weak
+        ETagValidator = ETagValidator.Weak,
+
+        // body content length
+        // 40 * 1024    = default
+        BodyMaxLength = 20 * 1024
+    });
+}
+
 // Add "app.UseETag();" to "Configure" method in Startup.cs
 public void Configure(IApplicationBuilder app, IHostingEnvironment env)
 {
     app.UseStaticFiles();
-    
+
     // Add a Middleware for each Controller Request
     // Atention: add app.UseETag after app.UseStaticFiles, the order is important
-    app.UseETag(app, new ETagOption()
-        {
-
-            // Set the BodyMaxLength to 30 KB (Http Body)
-            BodyMaxLength = 30 * 1024,
-            // algorithmus
-            // SHA1 = default   | strong ETag
-            // SHA265           | strong ETag
-            // SHA384           | strong ETag
-            // SHA512           | strong ETag
-            // MD5              | weak ETag
-            ETagAlgorithm = ETagAlgorithm.StrongSHA1
-        });
+    // deactivate or combine with Middlewar
+    // the EtagAttributes didn't need the Middleware
+    // app.UseETag();
 
     app.UseMvc(routes =>
     {
@@ -72,7 +167,41 @@ public void Configure(IApplicationBuilder app, IHostingEnvironment env)
             template: "{controller=Home}/{action=Index}/{id?}");
     });
 }
+
+// Can add on controller
+[ETag(ETagAlgorithm = ETagAlgorithm.SHA521)]
+public class HomeController : Controller
+{
+    // Can add on methods
+    [ETag(ETagAlgorithm = ETagAlgorithm.SHA265)]
+    public IActionResult Index()
+    {
+        return View();
+    }
+
+    [ETag(ETagValidator = ETagValidator.Weak)]
+    public IActionResult About()
+    {
+        ViewData["Message"] = "Your application description page.";
+
+        return View();
+    }
+
+    [ETag(ETagValidator = ETagValidator.Strong, BodyMaxLength = 30 * 1024, ETagAlgorithm = ETagAlgorithm.SHA384)]
+    public IActionResult Contact()
+    {
+        ViewData["Message"] = "Your contact page.";
+
+        return View();
+    }
+
+    public IActionResult Error()
+    {
+        return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+    }
+}
 ```
+
 ## Unittested
 The Code is unittestet.
 

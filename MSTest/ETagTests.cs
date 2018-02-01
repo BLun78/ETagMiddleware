@@ -23,7 +23,7 @@ namespace ETagMiddlewareTest
             {
             }
 
-            public long BodyMaxLength => this._bodyMaxLength;
+            public long BodyMaxLength => this._options.BodyMaxLength;
             public ILogger Logger => this._logger;
             public bool BaseIsEtagSupported(HttpContext context) => base.IsEtagSupportedOrNeeded(context);
             public void BaseAddEtagToHeader(HttpContext context, string etag) => base.AddEtagToHeader(context, etag);
@@ -60,7 +60,7 @@ namespace ETagMiddlewareTest
         {
             // arange
             long length = 0;
-            ETagOption etagOption = new ETagOption() { BodyMaxLength = length, ETagAlgorithm = ETagAlgorithm.SHA1, DefaultETagValidator = ETagValidator.Strong };
+            ETagOption etagOption = new ETagOption() { BodyMaxLength = length, ETagAlgorithm = ETagAlgorithm.SHA1, ETagValidator = ETagValidator.Strong };
 
             IOptions<ETagOption> options = Options.Create(etagOption);
 
@@ -77,7 +77,7 @@ namespace ETagMiddlewareTest
         {
             // arange
             long length = 10;
-            ETagOption etagOption = new ETagOption() { BodyMaxLength = length, ETagAlgorithm = ETagAlgorithm.SHA1, DefaultETagValidator = ETagValidator.Strong };
+            ETagOption etagOption = new ETagOption() { BodyMaxLength = length, ETagAlgorithm = ETagAlgorithm.SHA1, ETagValidator = ETagValidator.Strong };
 
             IOptions<ETagOption> options = Options.Create(etagOption);
 
@@ -95,7 +95,7 @@ namespace ETagMiddlewareTest
         {
             // arange
             long length = 1;
-            ETagOption etagOption = new ETagOption() { BodyMaxLength = length, ETagAlgorithm = ETagAlgorithm.SHA1, DefaultETagValidator = ETagValidator.Strong };
+            ETagOption etagOption = new ETagOption() { BodyMaxLength = length, ETagAlgorithm = ETagAlgorithm.SHA1, ETagValidator = ETagValidator.Strong };
 
             IOptions<ETagOption> options = Options.Create(etagOption);
 
@@ -112,7 +112,7 @@ namespace ETagMiddlewareTest
         {
             // arange
             long length = 100;
-            ETagOption etagOption = new ETagOption() { BodyMaxLength = length, ETagAlgorithm = ETagAlgorithm.SHA1, DefaultETagValidator = ETagValidator.Strong };
+            ETagOption etagOption = new ETagOption() { BodyMaxLength = length, ETagAlgorithm = ETagAlgorithm.SHA1, ETagValidator = ETagValidator.Strong };
 
             IOptions<ETagOption> options = Options.Create(etagOption);
 
@@ -133,7 +133,7 @@ namespace ETagMiddlewareTest
         {
             // arange
             long length = 100;
-            ETagOption etagOption = new ETagOption() { BodyMaxLength = length, ETagAlgorithm = ETagAlgorithm.SHA1, DefaultETagValidator = ETagValidator.Strong };
+            ETagOption etagOption = new ETagOption() { BodyMaxLength = length, ETagAlgorithm = ETagAlgorithm.SHA1, ETagValidator = ETagValidator.Strong };
             IOptions<ETagOption> options = Options.Create(etagOption);
             var etag = new TestETag(options, CreateILoggerFactory());
 
@@ -164,7 +164,7 @@ namespace ETagMiddlewareTest
         {
             // arange
             long length = 100;
-            ETagOption etagOption = new ETagOption() { BodyMaxLength = length, ETagAlgorithm = ETagAlgorithm.SHA1, DefaultETagValidator = ETagValidator.Strong };
+            ETagOption etagOption = new ETagOption() { BodyMaxLength = length, ETagAlgorithm = ETagAlgorithm.SHA1, ETagValidator = ETagValidator.Strong };
             IOptions<ETagOption> options = Options.Create(etagOption);
             var etag = new TestETag(options, CreateILoggerFactory());
 
@@ -195,7 +195,7 @@ namespace ETagMiddlewareTest
         {
             // arange
             long length = 100;
-            ETagOption etagOption = new ETagOption() { BodyMaxLength = length, ETagAlgorithm = ETagAlgorithm.SHA1, DefaultETagValidator = ETagValidator.Strong };
+            ETagOption etagOption = new ETagOption() { BodyMaxLength = length, ETagAlgorithm = ETagAlgorithm.SHA1, ETagValidator = ETagValidator.Strong };
             IOptions<ETagOption> options = Options.Create(etagOption);
             var etag = new TestETag(options, CreateILoggerFactory());
 
@@ -226,7 +226,7 @@ namespace ETagMiddlewareTest
         {
             // arange
             long length = 100;
-            ETagOption etagOption = new ETagOption() { BodyMaxLength = length, ETagAlgorithm = ETagAlgorithm.SHA1, DefaultETagValidator = ETagValidator.Strong };
+            ETagOption etagOption = new ETagOption() { BodyMaxLength = length, ETagAlgorithm = ETagAlgorithm.SHA1, ETagValidator = ETagValidator.Strong };
             IOptions<ETagOption> options = Options.Create(etagOption);
             var etag = new TestETag(options, CreateILoggerFactory());
 
@@ -257,7 +257,7 @@ namespace ETagMiddlewareTest
         {
             // arange
             long length = 100;
-            ETagOption etagOption = new ETagOption() { BodyMaxLength = length, ETagAlgorithm = ETagAlgorithm.SHA1, DefaultETagValidator = ETagValidator.Strong };
+            ETagOption etagOption = new ETagOption() { BodyMaxLength = length, ETagAlgorithm = ETagAlgorithm.SHA1, ETagValidator = ETagValidator.Strong };
             IOptions<ETagOption> options = Options.Create(etagOption);
             var etag = new TestETag(options, CreateILoggerFactory());
 
@@ -288,7 +288,7 @@ namespace ETagMiddlewareTest
         {
             // arange
             long length = 100;
-            ETagOption etagOption = new ETagOption() { BodyMaxLength = length, ETagAlgorithm = ETagAlgorithm.SHA1, DefaultETagValidator = ETagValidator.Strong };
+            ETagOption etagOption = new ETagOption() { BodyMaxLength = length, ETagAlgorithm = ETagAlgorithm.SHA1, ETagValidator = ETagValidator.Strong };
             IOptions<ETagOption> options = Options.Create(etagOption);
             var etag = new TestETag(options, CreateILoggerFactory());
 
@@ -324,7 +324,7 @@ namespace ETagMiddlewareTest
             // arange
             var etagString = "HalloWeltEtag";
             long length = 100;
-            ETagOption etagOption = new ETagOption() { BodyMaxLength = length, ETagAlgorithm = ETagAlgorithm.SHA1, DefaultETagValidator = ETagValidator.Strong };
+            ETagOption etagOption = new ETagOption() { BodyMaxLength = length, ETagAlgorithm = ETagAlgorithm.SHA1, ETagValidator = ETagValidator.Strong };
 
             IOptions<ETagOption> options = Options.Create(etagOption);
             var etag = new TestETag(options, CreateILoggerFactory());
@@ -356,7 +356,7 @@ namespace ETagMiddlewareTest
         {
             // arange
             long length = 0;
-            ETagOption etagOption = new ETagOption() { BodyMaxLength = length, ETagAlgorithm = ETagAlgorithm.SHA1, DefaultETagValidator = ETagValidator.Strong };
+            ETagOption etagOption = new ETagOption() { BodyMaxLength = length, ETagAlgorithm = ETagAlgorithm.SHA1, ETagValidator = ETagValidator.Strong };
 
             IOptions<ETagOption> options = Options.Create(etagOption);
             var etag = new TestETag(options, Substitute.For<ILoggerFactory>());

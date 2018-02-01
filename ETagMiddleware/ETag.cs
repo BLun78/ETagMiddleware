@@ -19,7 +19,6 @@ namespace BLun.ETagMiddleware
     public abstract class ETag
     {
         protected const string NoContentBodyHash = "\"z4PhNX7vuL3xVChQ1m2AB9Yg5AULVxXcg_SpIdNs6c5H0NE8XYXysP-DGNKHfuwvY7kxvUdBeoGlODJ6-SfaPg\"";
-        protected readonly long _bodyMaxLength;
         protected readonly ILogger _logger;
         protected readonly ETagOption _options;
 
@@ -37,7 +36,7 @@ namespace BLun.ETagMiddleware
         /// <param name="logger">An <see cref="ILogger"/> instance used to logging.</param>
         /// <exception cref="ArgumentNullException"></exception>
         public ETag(
-            [NotNull] ETagOption options,
+            [CanBeNull] ETagOption options,
             [NotNull] ILogger logger)
         {
             if (options == null){
@@ -45,14 +44,14 @@ namespace BLun.ETagMiddleware
 
             } else {
                 _options = options;
+                _options.BodyMaxLength = _options.BodyMaxLength == 0
+                    ? ETagMiddlewareExtensions.DefaultBodyMaxLength
+                    : _options.BodyMaxLength;
             }
-            _bodyMaxLength = _options.BodyMaxLength > 0
-                   ? _options.BodyMaxLength
-                   : ETagMiddlewareExtensions.DefaultBodyMaxLength;
-            
+
             if (logger == null) throw new ArgumentNullException(nameof(logger));
             _logger = logger;
-            _logger.LogDebug($"The Etag algorithm is [{_options.ETagAlgorithm.ToString()}] and {_options.DefaultETagValidator.ToString()} ETag");
+            _logger.LogDebug($"The Etag algorithm is [{_options.ETagAlgorithm.ToString()}] and [{_options.ETagValidator.ToString()}] ETag Validator - MaxBodyLength=[{_options.BodyMaxLength}]");
         }
 
         /// <summary>
@@ -247,9 +246,7 @@ namespace BLun.ETagMiddleware
 
         protected string ParseValidations([NotNull] HttpContext context, [NotNull] string etag)
         {
-
-
-            if (_options.DefaultETagValidator == ETagValidator.Strong)
+            if (_options.ETagValidator == ETagValidator.Strong)
             {
                 return etag;
             }
@@ -263,7 +260,7 @@ namespace BLun.ETagMiddleware
         {
             inputStream.Position = 0;
             byte[] bytes = hashAlgorithm.ComputeHash(inputStream);
-
+            _logger.LogDebug($"Hash has a length of [{bytes.Length}]");
             return ParseValidations(context, $"\"{WebEncoders.Base64UrlEncode(bytes)}\"");
         }
 
@@ -290,9 +287,9 @@ namespace BLun.ETagMiddleware
 
         protected void AddEtagToHeader([NotNull] HttpContext context, [NotNull] string etag)
         {
-            _logger.LogInformation($"Set to response {_options.DefaultETagValidator.ToString()} ETag::[{etag}]");
+            _logger.LogInformation($"Set to response {_options.ETagValidator.ToString()} ETag::[{etag}]");
             context.Response.Headers.Add(HeaderNames.ETag, etag);
-            _logger.LogDebug($"Response has {_options.DefaultETagValidator.ToString()} ETag::[{etag}]");
+            _logger.LogDebug($"Response has {_options.ETagValidator.ToString()} ETag::[{etag}]");
         }
 
         protected bool IsEtagSupportedOrNeeded([NotNull] HttpContext context)
@@ -315,9 +312,9 @@ namespace BLun.ETagMiddleware
                 return false;
             }
 
-            if (context.Response.Body.Length > _bodyMaxLength)
+            if (context.Response.Body.Length > _options.BodyMaxLength)
             {
-                _logger.LogDebug($"The Body.Length=[{context.Response.Body.Length}] is bigger then the BodyMaxLength=[{_bodyMaxLength}] configuration.");
+                _logger.LogDebug($"The Body.Length=[{context.Response.Body.Length}] is bigger then the BodyMaxLength=[{_options.BodyMaxLength}] configuration.");
                 return false;
             }
 

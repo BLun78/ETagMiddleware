@@ -26,8 +26,11 @@ namespace BLun.ETagMiddleware
         public static IApplicationBuilder UseETag([NotNull] this IApplicationBuilder app)
         {
             if (app == null) throw new ArgumentNullException(nameof(app));
+            if (null == app.ApplicationServices.GetService(typeof(ETagMiddleware))) {
+                throw new InvalidOperationException("No service for type 'BLun.ETagMiddleware.ETagMiddleware' has been registered. Add [services.AddETag()] in the method [public void ConfigureServices(IServiceCollection services)]");
+            }
 
-            return app.UseMiddleware<global::BLun.ETagMiddleware.ETagMiddleware>();
+            return app.UseMiddleware<ETagMiddleware>();
         }
 
         public static IServiceCollection AddETag([NotNull] this IServiceCollection services)
@@ -37,6 +40,17 @@ namespace BLun.ETagMiddleware
             services.AddTransient<ETagMiddleware>();
 
             return services;
+        }
+
+        public static IServiceCollection AddETag([NotNull] this IServiceCollection services, [NotNull] ETagOption configuration){
+            if (configuration == null) throw new ArgumentNullException(nameof(configuration));
+            AddETag(services);
+
+            return services.Configure<ETagOption>((ETagOption eTagOption) => {
+                eTagOption.BodyMaxLength = configuration.BodyMaxLength;
+                eTagOption.ETagValidator = configuration.ETagValidator;
+                eTagOption.ETagAlgorithm = configuration.ETagAlgorithm;
+            });
         }
     }
 }

@@ -8,12 +8,12 @@ using Microsoft.Extensions.Options;
 namespace BLun.ETagMiddleware
 {
     [AttributeUsage(AttributeTargets.Method | AttributeTargets.Class)]
-    public sealed class ETagAttribute : Attribute, IAsyncActionFilter
+    public class ETagAttribute : Attribute, IAsyncActionFilter
     {
         private class ETagActionFilter : ETag
         {
             public ETagActionFilter(
-                [NotNull] ETagOption options,
+                [CanBeNull] ETagOption options,
                 [NotNull] ILogger logger)
                 : base(options, logger)
             {
@@ -72,20 +72,27 @@ namespace BLun.ETagMiddleware
         {
             var options = (IOptions<ETagOption>)context.HttpContext.RequestServices.GetService(typeof(IOptions<ETagOption>));
             var loggerFactory = (ILoggerFactory)context.HttpContext.RequestServices.GetService(typeof(ILoggerFactory));
-            var etagOption = new ETagOption()
-            {
-                BodyMaxLength = options.Value.BodyMaxLength,
-                DefaultETagValidator = options.Value.DefaultETagValidator,
-                ETagAlgorithm = options.Value.ETagAlgorithm
-            };
+            if (loggerFactory == null) throw new InvalidOperationException("The ILoggerFactory is null! Register a service for ILoggerFactory!");
 
-            if(isSetBodyMaxLength){
+            var etagOption = new ETagOption();
+
+            if (options != null && options.Value != null)
+            {
+                etagOption.BodyMaxLength = options.Value.BodyMaxLength;
+                etagOption.ETagValidator = options.Value.ETagValidator;
+                etagOption.ETagAlgorithm = options.Value.ETagAlgorithm;
+            }
+
+            if (isSetBodyMaxLength)
+            {
                 etagOption.BodyMaxLength = BodyMaxLength;
             }
-            if(isSetETagValidator){
-                etagOption.DefaultETagValidator = ETagValidator;
+            if (isSetETagValidator)
+            {
+                etagOption.ETagValidator = ETagValidator;
             }
-            if(isSetETagAlgorithm){
+            if (isSetETagAlgorithm)
+            {
                 etagOption.ETagAlgorithm = ETagAlgorithm;
             }
 

@@ -9,7 +9,7 @@ namespace BLun.ETagMiddleware
     /// <summary>
     /// Enables ETag middleware for request
     /// </summary>
-    public sealed class ETagMiddleware : ETag, IMiddleware
+    public class ETagMiddleware : ETag, IMiddleware
     {
         public ETagMiddleware(
             [NotNull] IOptions<ETagOption> options,

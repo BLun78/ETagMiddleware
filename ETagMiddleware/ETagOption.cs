@@ -4,15 +4,15 @@ namespace BLun.ETagMiddleware
     /// <summary>
     /// ETag option.
     /// </summary>
-    public class ETagOption
+    public sealed class ETagOption
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="T:BLun.ETagMiddleware.ETagOption"/> class.
         /// </summary>
         public ETagOption(){
-            BodyMaxLength = ETagMiddlewareExtensions.DefaultBodyMaxLength;
-            ETagAlgorithm = ETagAlgorithm.SHA1;
-            DefaultETagValidator = ETagValidator.Strong;
+            this.BodyMaxLength = ETagMiddlewareExtensions.DefaultBodyMaxLength;
+            this.ETagAlgorithm = ETagAlgorithm.SHA1;
+            this.ETagValidator = ETagValidator.Strong;
         }
             
         /// <summary>
@@ -22,6 +22,6 @@ namespace BLun.ETagMiddleware
 
         public ETagAlgorithm ETagAlgorithm { get; set; }
 
-        public ETagValidator DefaultETagValidator { get; set; }
+        public ETagValidator ETagValidator { get; set; }
     }
 }
