@@ -11,20 +11,20 @@ using NSubstitute;
 namespace ETagMiddlewareTest
 {
     [TestClass]
-    public class ETagMiddlewareTests
+    public class ETagTests
     {
-        internal class TestETagMiddleware : ETagMiddleware
+        private sealed class TestETag : ETag
         {
 
-            public TestETagMiddleware(RequestDelegate next,
-                                      IOptions<ETagOption> options,
-                                      ILoggerFactory loggerFactory)
-                   : base(next, options, loggerFactory)
+            public TestETag(IOptions<ETagOption> options,
+                            ILoggerFactory loggerFactory)
+                : base(options,
+                       loggerFactory.CreateLogger<TestETag>())
             {
             }
 
             public long BodyMaxLength => this._bodyMaxLength;
-            public ILogger<ETagMiddleware> Logger => this._logger;
+            public ILogger Logger => this._logger;
             public bool BaseIsEtagSupported(HttpContext context) => base.IsEtagSupportedOrNeeded(context);
             public void BaseAddEtagToHeader(HttpContext context, string etag) => base.AddEtagToHeader(context, etag);
             public string BaseClean(string etag) => base.Clean(etag);
@@ -33,27 +33,14 @@ namespace ETagMiddlewareTest
         internal ILoggerFactory CreateILoggerFactory()
         {
             var loggerFactory = Substitute.For<ILoggerFactory>();
-            var logger = Substitute.For<ILogger<ETagMiddleware>>();
+            var logger = Substitute.For<ILogger<ETagTests>>();
 
-            loggerFactory.CreateLogger<ETagMiddleware>().Returns(logger);
+            loggerFactory.CreateLogger<ETagTests>().Returns(logger);
 
             return loggerFactory;
         }
 
         #region Ctor Tests
-
-        [TestMethod]
-        [ExpectedException(typeof(ArgumentNullException), "next")]
-        public void Create_And_Check_Ctor_Exceptions_Next_NOk()
-        {
-            // arange
-
-            // act
-            var etag = new ETagMiddleware(null, null, null);
-
-            // assert
-            Assert.Fail("No Exception");
-        }
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentNullException), "options")]
@@ -62,7 +49,7 @@ namespace ETagMiddlewareTest
             // arange
 
             // act
-            var etag = new ETagMiddleware(Substitute.For<RequestDelegate>(), null, null);
+            var etag = new TestETag(null, null);
 
             // assert
             Assert.Fail("No Exception");
@@ -73,11 +60,12 @@ namespace ETagMiddlewareTest
         {
             // arange
             long length = 0;
-            ETagOption etagOption = new ETagOption() { BodyMaxLength = length };
+            ETagOption etagOption = new ETagOption() { BodyMaxLength = length, ETagAlgorithm = ETagAlgorithm.SHA1, DefaultETagValidator = ETagValidator.Strong };
+
             IOptions<ETagOption> options = Options.Create(etagOption);
 
             // act
-            var etag = new TestETagMiddleware(Substitute.For<RequestDelegate>(), options, Substitute.For<ILoggerFactory>());
+            var etag = new TestETag(options, CreateILoggerFactory());
 
             // assert
             Assert.AreNotEqual(length, etag.BodyMaxLength);
@@ -89,11 +77,12 @@ namespace ETagMiddlewareTest
         {
             // arange
             long length = 10;
-            ETagOption etagOption = new ETagOption() { BodyMaxLength = length };
+            ETagOption etagOption = new ETagOption() { BodyMaxLength = length, ETagAlgorithm = ETagAlgorithm.SHA1, DefaultETagValidator = ETagValidator.Strong };
+
             IOptions<ETagOption> options = Options.Create(etagOption);
 
             // act
-            var etag = new TestETagMiddleware(Substitute.For<RequestDelegate>(), options, Substitute.For<ILoggerFactory>());
+            var etag = new TestETag(options, Substitute.For<ILoggerFactory>());
 
             // assert
             Assert.AreEqual(length, etag.BodyMaxLength);
@@ -106,13 +95,12 @@ namespace ETagMiddlewareTest
         {
             // arange
             long length = 1;
-            ETagOption etagOption = new ETagOption() { BodyMaxLength = length };
+            ETagOption etagOption = new ETagOption() { BodyMaxLength = length, ETagAlgorithm = ETagAlgorithm.SHA1, DefaultETagValidator = ETagValidator.Strong };
+
             IOptions<ETagOption> options = Options.Create(etagOption);
 
             // act
-            var etag = new ETagMiddleware(Substitute.For<RequestDelegate>(),
-                                          options,
-                                          null);
+            var etag = new TestETag(options, null);
 
             // assert
             Assert.Fail("No Exception");
@@ -124,13 +112,12 @@ namespace ETagMiddlewareTest
         {
             // arange
             long length = 100;
-            ETagOption etagOption = new ETagOption() { BodyMaxLength = length };
+            ETagOption etagOption = new ETagOption() { BodyMaxLength = length, ETagAlgorithm = ETagAlgorithm.SHA1, DefaultETagValidator = ETagValidator.Strong };
+
             IOptions<ETagOption> options = Options.Create(etagOption);
 
             // act
-            var etag = new TestETagMiddleware(Substitute.For<RequestDelegate>(),
-                                          options,
-                                          CreateILoggerFactory());
+            var etag = new TestETag(options, CreateILoggerFactory());
 
             // assert
             Assert.IsNotNull(etag.Logger);
@@ -146,11 +133,9 @@ namespace ETagMiddlewareTest
         {
             // arange
             long length = 100;
-            ETagOption etagOption = new ETagOption() { BodyMaxLength = length };
+            ETagOption etagOption = new ETagOption() { BodyMaxLength = length, ETagAlgorithm = ETagAlgorithm.SHA1, DefaultETagValidator = ETagValidator.Strong };
             IOptions<ETagOption> options = Options.Create(etagOption);
-            var etag = new TestETagMiddleware(Substitute.For<RequestDelegate>(),
-                                          options,
-                                          CreateILoggerFactory());
+            var etag = new TestETag(options, CreateILoggerFactory());
 
             var response = Substitute.For<HttpResponse>();
             response.Body.Returns(Substitute.For<Stream>());
@@ -160,6 +145,10 @@ namespace ETagMiddlewareTest
 
             var context = Substitute.For<HttpContext>();
             context.Response.Returns(response);
+
+            var request = Substitute.For<HttpRequest>();
+            request.Method.Returns(HttpMethods.Get);
+            context.Request.Returns(request);
 
             // act
             var result = etag.BaseIsEtagSupported(context);
@@ -175,11 +164,9 @@ namespace ETagMiddlewareTest
         {
             // arange
             long length = 100;
-            ETagOption etagOption = new ETagOption() { BodyMaxLength = length };
+            ETagOption etagOption = new ETagOption() { BodyMaxLength = length, ETagAlgorithm = ETagAlgorithm.SHA1, DefaultETagValidator = ETagValidator.Strong };
             IOptions<ETagOption> options = Options.Create(etagOption);
-            var etag = new TestETagMiddleware(Substitute.For<RequestDelegate>(),
-                                          options,
-                                          CreateILoggerFactory());
+            var etag = new TestETag(options, CreateILoggerFactory());
 
             var response = Substitute.For<HttpResponse>();
             response.Body.Returns(Substitute.For<Stream>());
@@ -189,6 +176,41 @@ namespace ETagMiddlewareTest
 
             var context = Substitute.For<HttpContext>();
             context.Response.Returns(response);
+
+            var request = Substitute.For<HttpRequest>();
+            request.Method.Returns(HttpMethods.Get);
+            context.Request.Returns(request);
+
+            // act
+            var result = etag.BaseIsEtagSupported(context);
+
+            // assert
+            Assert.IsNotNull(etag.Logger);
+            Assert.AreEqual(length, etag.BodyMaxLength);
+            Assert.IsFalse(result);
+        }
+
+        [TestMethod]
+        public void IsEtagSupported_HttpMethods_Post_NOk()
+        {
+            // arange
+            long length = 100;
+            ETagOption etagOption = new ETagOption() { BodyMaxLength = length, ETagAlgorithm = ETagAlgorithm.SHA1, DefaultETagValidator = ETagValidator.Strong };
+            IOptions<ETagOption> options = Options.Create(etagOption);
+            var etag = new TestETag(options, CreateILoggerFactory());
+
+            var response = Substitute.For<HttpResponse>();
+            response.Body.Returns(Substitute.For<Stream>());
+            response.Body.Length.ReturnsForAnyArgs(length);
+            response.StatusCode.Returns<int>(200);
+            response.Headers.ContainsKey(HeaderNames.ETag).ReturnsForAnyArgs(false);
+
+            var context = Substitute.For<HttpContext>();
+            context.Response.Returns(response);
+
+            var request = Substitute.For<HttpRequest>();
+            request.Method.Returns(HttpMethods.Post);
+            context.Request.Returns(request);
 
             // act
             var result = etag.BaseIsEtagSupported(context);
@@ -204,11 +226,9 @@ namespace ETagMiddlewareTest
         {
             // arange
             long length = 100;
-            ETagOption etagOption = new ETagOption() { BodyMaxLength = length };
+            ETagOption etagOption = new ETagOption() { BodyMaxLength = length, ETagAlgorithm = ETagAlgorithm.SHA1, DefaultETagValidator = ETagValidator.Strong };
             IOptions<ETagOption> options = Options.Create(etagOption);
-            var etag = new TestETagMiddleware(Substitute.For<RequestDelegate>(),
-                                          options,
-                                          CreateILoggerFactory());
+            var etag = new TestETag(options, CreateILoggerFactory());
 
             var response = Substitute.For<HttpResponse>();
             response.Body.Returns(Substitute.For<Stream>());
@@ -218,6 +238,10 @@ namespace ETagMiddlewareTest
 
             var context = Substitute.For<HttpContext>();
             context.Response.Returns(response);
+
+            var request = Substitute.For<HttpRequest>();
+            request.Method.Returns(HttpMethods.Get);
+            context.Request.Returns(request);
 
             // act
             var result = etag.BaseIsEtagSupported(context);
@@ -233,11 +257,9 @@ namespace ETagMiddlewareTest
         {
             // arange
             long length = 100;
-            ETagOption etagOption = new ETagOption() { BodyMaxLength = length };
+            ETagOption etagOption = new ETagOption() { BodyMaxLength = length, ETagAlgorithm = ETagAlgorithm.SHA1, DefaultETagValidator = ETagValidator.Strong };
             IOptions<ETagOption> options = Options.Create(etagOption);
-            var etag = new TestETagMiddleware(Substitute.For<RequestDelegate>(),
-                                          options,
-                                          CreateILoggerFactory());
+            var etag = new TestETag(options, CreateILoggerFactory());
 
             var response = Substitute.For<HttpResponse>();
             response.Body.Returns(Substitute.For<Stream>());
@@ -247,6 +269,10 @@ namespace ETagMiddlewareTest
 
             var context = Substitute.For<HttpContext>();
             context.Response.Returns(response);
+
+            var request = Substitute.For<HttpRequest>();
+            request.Method.Returns(HttpMethods.Get);
+            context.Request.Returns(request);
 
             // act
             var result = etag.BaseIsEtagSupported(context);
@@ -262,11 +288,9 @@ namespace ETagMiddlewareTest
         {
             // arange
             long length = 100;
-            ETagOption etagOption = new ETagOption() { BodyMaxLength = length };
+            ETagOption etagOption = new ETagOption() { BodyMaxLength = length, ETagAlgorithm = ETagAlgorithm.SHA1, DefaultETagValidator = ETagValidator.Strong };
             IOptions<ETagOption> options = Options.Create(etagOption);
-            var etag = new TestETagMiddleware(Substitute.For<RequestDelegate>(),
-                                          options,
-                                          CreateILoggerFactory());
+            var etag = new TestETag(options, CreateILoggerFactory());
 
             var response = Substitute.For<HttpResponse>();
             response.Body.Returns(Substitute.For<Stream>());
@@ -276,6 +300,10 @@ namespace ETagMiddlewareTest
 
             var context = Substitute.For<HttpContext>();
             context.Response.Returns(response);
+
+            var request = Substitute.For<HttpRequest>();
+            request.Method.Returns(HttpMethods.Get);
+            context.Request.Returns(request);
 
             // act
             var result = etag.BaseIsEtagSupported(context);
@@ -296,11 +324,10 @@ namespace ETagMiddlewareTest
             // arange
             var etagString = "HalloWeltEtag";
             long length = 100;
-            ETagOption etagOption = new ETagOption() { BodyMaxLength = length };
+            ETagOption etagOption = new ETagOption() { BodyMaxLength = length, ETagAlgorithm = ETagAlgorithm.SHA1, DefaultETagValidator = ETagValidator.Strong };
+
             IOptions<ETagOption> options = Options.Create(etagOption);
-            var etag = new TestETagMiddleware(Substitute.For<RequestDelegate>(),
-                                          options,
-                                          CreateILoggerFactory());
+            var etag = new TestETag(options, CreateILoggerFactory());
 
             var response = Substitute.For<HttpResponse>();
             response.Body.Returns(Substitute.For<Stream>());
@@ -329,9 +356,10 @@ namespace ETagMiddlewareTest
         {
             // arange
             long length = 0;
-            ETagOption etagOption = new ETagOption() { BodyMaxLength = length };
+            ETagOption etagOption = new ETagOption() { BodyMaxLength = length, ETagAlgorithm = ETagAlgorithm.SHA1, DefaultETagValidator = ETagValidator.Strong };
+
             IOptions<ETagOption> options = Options.Create(etagOption);
-            var etag = new TestETagMiddleware(Substitute.For<RequestDelegate>(), options, Substitute.For<ILoggerFactory>());
+            var etag = new TestETag(options, Substitute.For<ILoggerFactory>());
             var testString = "He\"ll\"o";
             var expected = "Hello";
 

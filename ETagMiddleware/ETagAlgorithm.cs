@@ -2,10 +2,10 @@
 {
     public enum ETagAlgorithm 
     {
-        StrongSHA1= 1, // default
-        StrongSHA265 = 265,
-        StrongSHA384 = 384,
-        StrongSHA521 = 512,
-        WeakMD5 = 5,
+        SHA1= 1, // default
+        SHA265 = 265,
+        SHA384 = 384,
+        SHA521 = 512,
+        MD5 = 5,
     }
 }

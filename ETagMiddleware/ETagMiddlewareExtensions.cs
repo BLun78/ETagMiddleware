@@ -1,6 +1,7 @@
 ﻿using System;
 using JetBrains.Annotations;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 
 namespace BLun.ETagMiddleware
@@ -16,36 +17,26 @@ namespace BLun.ETagMiddleware
         public static long DefaultBodyMaxLength => 40 * 1024;
 
         /// <summary>
-        /// Enable Etag handshake
-        /// </summary>
-        /// <param name="app"></param>
-        /// <returns></returns>
-        /// <exception cref="ArgumentNullException"></exception>
-        public static IApplicationBuilder UseETag([NotNull] this IApplicationBuilder app)
-        {
-            if (app == null) throw new ArgumentNullException(nameof(app));
-
-            return UseETag(app, new ETagOption()
-            {
-                BodyMaxLength = ETagMiddlewareExtensions.DefaultBodyMaxLength,
-                ETagAlgorithm = ETagAlgorithm.StrongSHA1
-            });
-        }
-
-        /// <summary>
         /// Enable Etag handshake with given option
         /// </summary>
         /// <param name="app"></param>
         /// <param name="option"></param>
         /// <returns></returns>
         /// <exception cref="ArgumentNullException"></exception>
-        public static IApplicationBuilder UseETag([NotNull] this IApplicationBuilder app,
-                                                    [NotNull] ETagOption option)
+        public static IApplicationBuilder UseETag([NotNull] this IApplicationBuilder app)
         {
             if (app == null) throw new ArgumentNullException(nameof(app));
-            if (option == null) throw new ArgumentNullException(nameof(option));
 
-            return app.UseMiddleware<global::BLun.ETagMiddleware.ETagMiddleware>(Options.Create(option));
+            return app.UseMiddleware<global::BLun.ETagMiddleware.ETagMiddleware>();
+        }
+
+        public static IServiceCollection AddETag([NotNull] this IServiceCollection services)
+        {
+            if (services == null) throw new ArgumentNullException(nameof(services));
+
+            services.AddTransient<ETagMiddleware>();
+
+            return services;
         }
     }
 }
