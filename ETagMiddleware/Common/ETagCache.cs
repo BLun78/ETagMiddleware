@@ -43,7 +43,6 @@ namespace BLun.ETagMiddleware.Common
             if (options == null)
             {
                 _options = new ETagOption();
-
             }
             else
             {
@@ -174,38 +173,79 @@ namespace BLun.ETagMiddleware.Common
         {
             if (IsEtagSupportedOrNeeded(context))
             {
-                StringValues requestEtag = string.Empty;
-                if (context.Request.Headers.TryGetValue(HeaderNames.IfNoneMatch, out requestEtag))
-                {
-                    _logger.LogInformation($"Request has an If-None-Match::[{requestEtag.ToString()}] header");
-                }
+                StringValues ifNoneMatch = GetIfNoneMatch(context);
+                // StringValues ifModifiedSince = GetIfModifiedSince(context);
 
-                // StringValues ifModifiedSince = string.Empty;
-                // if (context.Request.Headers.TryGetValue(HeaderNames.IfModifiedSince, out ifModifiedSince))
-                // {
-                //    _logger.LogInformation($"Request has an If-Modified-Since::[{requestEtag.ToString()}] header");
-                // }
+                string etag = CreateETagAndAddToHeader(context, ms);
 
-                var etag = string.Empty;
-                if (context.Response.Body.Length == 0)
-                {
-                    etag = GetAndAddETagToHeader(context);
-                    _logger.LogDebug($"Response has no body-content, fast etag is set to [{etag}]");
-                }
-                else
-                {
-                    etag = GetAndAddETagToHeader(context, ms);
-                }
-
-                CheckETagAndSetHttpStatusCode(context, requestEtag, etag);
+                CheckETagAndSetHttpStatusCode(context, ifNoneMatch, etag);
             }
         }
 
-        protected void CheckETagAndSetHttpStatusCode(HttpContext context, StringValues requestEtag, string etag)
+        protected StringValues GetLastModified(HttpContext context)
+        {
+            StringValues lastModified = string.Empty;
+            if (context.Request.Headers.TryGetValue(HeaderNames.LastModified, out lastModified))
+            {
+                _logger.LogInformation($"Request has an Last-Modified::[{lastModified.ToString()}] header");
+            }
+
+            return lastModified;
+        }
+
+        protected StringValues GetIfModifiedSince(HttpContext context)
+        {
+            StringValues ifModifiedSince = string.Empty;
+            if (context.Request.Headers.TryGetValue(HeaderNames.IfModifiedSince, out ifModifiedSince))
+            {
+                _logger.LogInformation($"Request has an If-Modified-Since::[{ifModifiedSince.ToString()}] header");
+            }
+
+            return ifModifiedSince;
+        }
+
+        protected StringValues GetIfNoneMatch(HttpContext context)
+        {
+            StringValues ifNoneMatch = string.Empty;
+            if (context.Request.Headers.TryGetValue(HeaderNames.IfNoneMatch, out ifNoneMatch))
+            {
+                _logger.LogInformation($"Request has an If-None-Match::[{ifNoneMatch.ToString()}] header");
+            }
+
+            return ifNoneMatch;
+        }
+
+        protected StringValues GetCacheControl(HttpContext context)
+        {
+            StringValues cacheControl = string.Empty;
+            if (context.Request.Headers.TryGetValue(HeaderNames.CacheControl, out cacheControl))
+            {
+                _logger.LogInformation($"Request has an Cache-Control::[{cacheControl.ToString()}] header");
+            }
+
+            return cacheControl;
+        }
+
+        protected string CreateETagAndAddToHeader(HttpContext context, Stream ms)
+        {
+            var etag = string.Empty;
+            if (context.Response.Body.Length == 0)
+            {
+                etag = GetAndAddETagToHeader(context);
+                _logger.LogDebug($"Response has no body-content, fast etag is set to [{etag}]");
+            }
+            else
+            {
+                etag = GetAndAddETagToHeader(context, ms);
+            }
+
+            return etag;
+        }
+
+        protected void CheckETagAndSetHttpStatusCode([NotNull] HttpContext context, [CanBeNull] string requestEtag, [NotNull] string etag)
         {
             if (!string.IsNullOrWhiteSpace(etag)
-                && Clean(requestEtag) == Clean(etag)
-                && !IsNoCacheRequest(context))
+                && etag.Equals(requestEtag))
             {
                 _logger.LogInformation($"Response StatusCode is set to 304 (If-None-Match == ETag [{etag}])");
                 context.Response.StatusCode = StatusCodes.Status304NotModified;
@@ -215,15 +255,12 @@ namespace BLun.ETagMiddleware.Common
 
         protected bool IsNoCacheRequest(HttpContext context)
         {
-            StringValues cacheControl = string.Empty;
-            if (context.Request.Headers.TryGetValue(HeaderNames.CacheControl, out cacheControl))
+            var cacheControl = GetCacheControl(context).ToString();
+            if (string.IsNullOrWhiteSpace(cacheControl))
             {
-                _logger.LogInformation($"Request has an Cache-Control::[{cacheControl.ToString()}] header");
-            }
-            if (string.IsNullOrWhiteSpace(cacheControl.ToString()) ){
                 return false;
             }
-            return !Regex.IsMatch(cacheControl.ToString(), @"^((?!no-cache).)*$");
+            return !Regex.IsMatch(cacheControl, @"^((?!no-cache).)*$");
         }
 
         protected string Clean([NotNull]string etag)
@@ -317,9 +354,11 @@ namespace BLun.ETagMiddleware.Common
             _logger.LogDebug($"Response has {_options.ETagValidator.ToString()} ETag::[{etag}]");
         }
 
-        protected bool IsMethodNotAllowed(string methods){
-            if (methods == HttpMethods.Get 
-                || methods == HttpMethods.Head){
+        protected bool IsMethodNotAllowed(string methods)
+        {
+            if (methods == HttpMethods.Get
+                || methods == HttpMethods.Head)
+            {
                 return false;
             }
             return true;
@@ -330,6 +369,11 @@ namespace BLun.ETagMiddleware.Common
             if (IsMethodNotAllowed(context.Request.Method))
             {
                 _logger.LogDebug($"The HttpMethode [{context.Request.Method}] is not suportet for ETag.");
+                return false;
+            }
+
+            if(IsNoCacheRequest(context)){
+                _logger.LogDebug($"The HttpHeader [{HeaderNames.CacheControl}] deactivate ETag for this http request.");
                 return false;
             }
 
