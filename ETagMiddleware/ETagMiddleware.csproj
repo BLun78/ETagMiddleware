@@ -16,11 +16,11 @@
     <PackageProjectUrl>https://github.com/BLun78/ETagMiddleware</PackageProjectUrl>
     <PackageTags>ETag If-None-Match AspNetCore MVC6 Middleware .NETStandard2.0</PackageTags>
     <Copyright>Copyright 2018 (c) Björn Lundström, Germany. All rights reserved.</Copyright>
-    <PackageVersion>1.2.0</PackageVersion>
-    <PackageVersionPrefix>1.2.0</PackageVersionPrefix>
+    <PackageVersion>1.2.1</PackageVersion>
+    <PackageVersionPrefix>1.2.1</PackageVersionPrefix>
     <PackageVersionSuffix>
     </PackageVersionSuffix>
-    <Version>1.2.0</Version>
+    <Version>1.2.1</Version>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DocumentationFile>

@@ -1,5 +1,6 @@
 # ETagMiddleware
 [ETag](https://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.19) Middleware for [Asp.Net Core -.NetStandard 2.0](https://docs.microsoft.com/aspnet/core/)
+Is supports Caching with Http Request Header 'If-None-Match' with Http Respons Header ETag.
 
 ## Inspiration
 I was inspired by Mads Kristensen 
@@ -169,16 +170,16 @@ public void Configure(IApplicationBuilder app, IHostingEnvironment env)
 }
 
 // Can add on controller
-[ETag(ETagAlgorithm = ETagAlgorithm.SHA521)]
+[ETag()]
 public class HomeController : Controller
 {
-    // Can add on methods
-    [ETag(ETagAlgorithm = ETagAlgorithm.SHA265)]
+    
     public IActionResult Index()
     {
         return View();
     }
 
+    // Can add on methods
     [ETag(ETagValidator = ETagValidator.Weak)]
     public IActionResult About()
     {
@@ -207,4 +208,3 @@ The Code is unittestet.
 
 ## Vision
 I would develope muche more test for it.
-Add more features for Cache-Controle-Dirictives with ETag.
