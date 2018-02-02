@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using BLun.ETagMiddleware;
+using BLun.ETagMiddleware.Common;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -13,7 +14,7 @@ namespace ETagMiddlewareTest
     [TestClass]
     public class ETagTests
     {
-        private sealed class TestETag : ETag
+        private sealed class TestETag : ETagCache
         {
 
             public TestETag(IOptions<ETagOption> options,

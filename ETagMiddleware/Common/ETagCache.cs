@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Security.Cryptography;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using JetBrains.Annotations;
 using Microsoft.AspNetCore.Http;
@@ -11,22 +12,22 @@ using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Primitives;
 using Microsoft.Net.Http.Headers;
 
-namespace BLun.ETagMiddleware
+namespace BLun.ETagMiddleware.Common
 {
     /// <summary>
     /// Enables ETag middleware for request
     /// </summary>
-    public abstract class ETag
+    internal class ETagCache : IMiddleware, IAsyncActionFilter
     {
         protected const string NoContentBodyHash = "\"z4PhNX7vuL3xVChQ1m2AB9Yg5AULVxXcg_SpIdNs6c5H0NE8XYXysP-DGNKHfuwvY7kxvUdBeoGlODJ6-SfaPg\"";
         protected readonly ILogger _logger;
         protected readonly ETagOption _options;
 
-        public ETag(
+        public ETagCache(
             [NotNull] IOptions<ETagOption> options,
-            [NotNull] ILogger logger) 
+            [NotNull] ILogger logger)
             : this(options?.Value, logger)
-        { 
+        {
         }
 
         /// <summary>
@@ -35,14 +36,17 @@ namespace BLun.ETagMiddleware
         /// <param name="options">The configuration options.</param>
         /// <param name="logger">An <see cref="ILogger"/> instance used to logging.</param>
         /// <exception cref="ArgumentNullException"></exception>
-        public ETag(
+        public ETagCache(
             [CanBeNull] ETagOption options,
             [NotNull] ILogger logger)
         {
-            if (options == null){
+            if (options == null)
+            {
                 _options = new ETagOption();
 
-            } else {
+            }
+            else
+            {
                 _options = options;
                 _options.BodyMaxLength = _options.BodyMaxLength == 0
                     ? ETagMiddlewareExtensions.DefaultBodyMaxLength
@@ -59,7 +63,7 @@ namespace BLun.ETagMiddleware
         /// </summary>
         /// <param name="context"></param>
         /// <returns></returns>
-        protected async Task BaseInvokeAsync(HttpContext context, RequestDelegate next)
+        public async Task InvokeAsync(HttpContext context, RequestDelegate next)
         {
             Stream originalStream = context.Response.Body;
             if (originalStream is MemoryStream)
@@ -82,7 +86,8 @@ namespace BLun.ETagMiddleware
                     }
                 }
             }
-            else {
+            else
+            {
                 using (var ms = new MemoryStream())
                 {
                     context.Response.Body = ms;
@@ -175,6 +180,12 @@ namespace BLun.ETagMiddleware
                     _logger.LogInformation($"Request has an If-None-Match::[{requestEtag.ToString()}] header");
                 }
 
+                // StringValues ifModifiedSince = string.Empty;
+                // if (context.Request.Headers.TryGetValue(HeaderNames.IfModifiedSince, out ifModifiedSince))
+                // {
+                //    _logger.LogInformation($"Request has an If-Modified-Since::[{requestEtag.ToString()}] header");
+                // }
+
                 var etag = string.Empty;
                 if (context.Response.Body.Length == 0)
                 {
@@ -193,12 +204,26 @@ namespace BLun.ETagMiddleware
         protected void CheckETagAndSetHttpStatusCode(HttpContext context, StringValues requestEtag, string etag)
         {
             if (!string.IsNullOrWhiteSpace(etag)
-                && Clean(requestEtag) == Clean(etag))
+                && Clean(requestEtag) == Clean(etag)
+                && !IsNoCacheRequest(context))
             {
                 _logger.LogInformation($"Response StatusCode is set to 304 (If-None-Match == ETag [{etag}])");
                 context.Response.StatusCode = StatusCodes.Status304NotModified;
                 _logger.LogDebug($"Response StatusCode is 304 (If-None-Match == ETag [{etag}])");
             }
+        }
+
+        protected bool IsNoCacheRequest(HttpContext context)
+        {
+            StringValues cacheControl = string.Empty;
+            if (context.Request.Headers.TryGetValue(HeaderNames.CacheControl, out cacheControl))
+            {
+                _logger.LogInformation($"Request has an Cache-Control::[{cacheControl.ToString()}] header");
+            }
+            if (string.IsNullOrWhiteSpace(cacheControl.ToString()) ){
+                return false;
+            }
+            return !Regex.IsMatch(cacheControl.ToString(), @"^((?!no-cache).)*$");
         }
 
         protected string Clean([NotNull]string etag)
@@ -292,9 +317,17 @@ namespace BLun.ETagMiddleware
             _logger.LogDebug($"Response has {_options.ETagValidator.ToString()} ETag::[{etag}]");
         }
 
+        protected bool IsMethodNotAllowed(string methods){
+            if (methods == HttpMethods.Get 
+                || methods == HttpMethods.Head){
+                return false;
+            }
+            return true;
+        }
+
         protected bool IsEtagSupportedOrNeeded([NotNull] HttpContext context)
         {
-            if (context.Request.Method != HttpMethods.Get)
+            if (IsMethodNotAllowed(context.Request.Method))
             {
                 _logger.LogDebug($"The HttpMethode [{context.Request.Method}] is not suportet for ETag.");
                 return false;

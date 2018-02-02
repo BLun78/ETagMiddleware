@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using BLun.ETagMiddleware.Common;
 using JetBrains.Annotations;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.Logging;
@@ -10,16 +11,6 @@ namespace BLun.ETagMiddleware
     [AttributeUsage(AttributeTargets.Method | AttributeTargets.Class)]
     public class ETagAttribute : Attribute, IAsyncActionFilter
     {
-        private class ETagActionFilter : ETag
-        {
-            public ETagActionFilter(
-                [CanBeNull] ETagOption options,
-                [NotNull] ILogger logger)
-                : base(options, logger)
-            {
-            }
-        }
-
         private bool isSetETagAlgorithm;
         private ETagAlgorithm eTagAlgorithm;
         public ETagAlgorithm ETagAlgorithm
@@ -68,7 +59,7 @@ namespace BLun.ETagMiddleware
             }
         }
 
-        public Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
+        public Task OnActionExecutionAsync([NotNull] ActionExecutingContext context, [NotNull] ActionExecutionDelegate next)
         {
             var options = (IOptions<ETagOption>)context.HttpContext.RequestServices.GetService(typeof(IOptions<ETagOption>));
             var loggerFactory = (ILoggerFactory)context.HttpContext.RequestServices.GetService(typeof(ILoggerFactory));
@@ -96,7 +87,7 @@ namespace BLun.ETagMiddleware
                 etagOption.ETagAlgorithm = ETagAlgorithm;
             }
 
-            var etag = new ETagActionFilter(etagOption, loggerFactory.CreateLogger<ETagAttribute>());
+            IAsyncActionFilter etag = new ETagCache(etagOption, loggerFactory.CreateLogger<ETagAttribute>());
 
             return etag.OnActionExecutionAsync(context, next);
         }

@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using BLun.ETagMiddleware.Common;
 using JetBrains.Annotations;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
@@ -9,13 +10,15 @@ namespace BLun.ETagMiddleware
     /// <summary>
     /// Enables ETag middleware for request
     /// </summary>
-    public class ETagMiddleware : ETag, IMiddleware
+    public class ETagMiddleware : IMiddleware
     {
+        private readonly IMiddleware etag;
+
         public ETagMiddleware(
             [NotNull] IOptions<ETagOption> options,
             [NotNull] ILoggerFactory loggerFactory) 
-            : base(options, loggerFactory.CreateLogger<ETagMiddleware>())
         {
+            etag = new ETagCache(options, loggerFactory.CreateLogger<ETagMiddleware>());
         }
 
         /// <summary>
@@ -25,7 +28,7 @@ namespace BLun.ETagMiddleware
         /// <returns></returns>
         public Task InvokeAsync(HttpContext context, RequestDelegate next)
         {
-            return base.BaseInvokeAsync(context, next);
+            return etag.InvokeAsync(context, next);
         }
     }
 }
