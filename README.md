@@ -1,6 +1,6 @@
 # ETagMiddleware
 [ETag](https://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.19) Middleware for [Asp.Net Core -.NetStandard 2.0](https://docs.microsoft.com/aspnet/core/)
-Is supports Caching with Http Request Header 'If-None-Match' with Http Respons Header ETag.
+Is supports Caching with Http Request Header 'If-None-Match' with Http Respons Header 'ETag' and set the HttpStatus tu 304. Http Request Header 'Cache-Controle' with 'no-cache' is integrated and would set the HttpStatus to 200.
 
 ## Inspiration
 I was inspired by Mads Kristensen 
