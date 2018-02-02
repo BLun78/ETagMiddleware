@@ -14,7 +14,7 @@
     <RepositoryType>git</RepositoryType>
     <PackageReleaseNotes>Is supports Caching with Http Request Header 'If-None-Match' with Http Respons Header 'ETag' and set the HttpStatus tu 304. Http Request Header 'Cache-Controle' with 'no-cache' is integrated and would set the HttpStatus to 200.</PackageReleaseNotes>
     <PackageProjectUrl>https://github.com/BLun78/ETagMiddleware</PackageProjectUrl>
-    <PackageTags>ETag If-None-Match AspNetCore MVC6 Middleware .NETStandard2.0</PackageTags>
+    <PackageTags>ETag If-None-Match If-Modified-Since 304 Cache-Controle AspNetCore MVC6 Middleware .NETStandard2.0</PackageTags>
     <Copyright>Copyright 2018 (c) Björn Lundström, Germany. All rights reserved.</Copyright>
     <PackageVersion>1.2.1</PackageVersion>
     <PackageVersionPrefix>1.2.1</PackageVersionPrefix>
