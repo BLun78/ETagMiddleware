@@ -45,7 +45,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Common\" />
-    <Folder Include="Common\" />
   </ItemGroup>
   <ItemGroup>
     <None Remove=".DS_Store" />

@@ -52,8 +52,7 @@ namespace BLun.ETagMiddleware.Common
                     : _options.BodyMaxLength;
             }
 
-            if (logger == null) throw new ArgumentNullException(nameof(logger));
-            _logger = logger;
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _logger.LogDebug($"The Etag algorithm is [{_options.ETagAlgorithm.ToString()}] and [{_options.ETagValidator.ToString()}] ETag Validator - MaxBodyLength=[{_options.BodyMaxLength}]");
         }
 
@@ -178,7 +177,7 @@ namespace BLun.ETagMiddleware.Common
 
                 string etag = CreateETagAndAddToHeader(context, ms);
 
-                CheckETagAndSetHttpStatusCode(context, ifNoneMatch, etag);
+                CheckETagAndSetHttpStatusCode(context, ifNoneMatch.ToString(), etag);
             }
         }
 
@@ -263,67 +262,57 @@ namespace BLun.ETagMiddleware.Common
             return !Regex.IsMatch(cacheControl, @"^((?!no-cache).)*$");
         }
 
-        protected string Clean([NotNull]string etag)
+        protected string GetResponseHash()
         {
-            return etag.Replace(@"""", "");
+            return ParseValidations(NoContentBodyHash);
         }
 
-        protected string GetResponseHash([NotNull] HttpContext context)
-        {
-            return ParseValidations(context, NoContentBodyHash);
-        }
-
-        protected string GetResponseHash([NotNull] HttpContext context, [NotNull] Stream inputStream)
+        protected string GetResponseHash([NotNull] Stream inputStream)
         {
             switch (_options.ETagAlgorithm)
             {
                 case ETagAlgorithm.MD5:
                     using (var algo = MD5.Create())
                     {
-                        return CreateHash(context, algo, inputStream);
+                        return CreateHash(algo, inputStream);
                     }
                 case ETagAlgorithm.SHA1:
                     using (var algo = SHA1.Create())
                     {
-                        return CreateHash(context, algo, inputStream);
+                        return CreateHash(algo, inputStream);
                     }
                 case ETagAlgorithm.SHA265:
                     using (var algo = SHA256.Create())
                     {
-                        return CreateHash(context, algo, inputStream);
+                        return CreateHash(algo, inputStream);
                     }
                 case ETagAlgorithm.SHA384:
                     using (var algo = SHA384.Create())
                     {
-                        return CreateHash(context, algo, inputStream);
+                        return CreateHash(algo, inputStream);
                     }
                 case ETagAlgorithm.SHA521:
                     using (var algo = SHA512.Create())
                     {
-                        return CreateHash(context, algo, inputStream);
+                        return CreateHash(algo, inputStream);
                     }
             }
             throw new InvalidOperationException("ETagAlgorithm");
         }
 
-        protected string ParseValidations([NotNull] HttpContext context, [NotNull] string etag)
+        protected string ParseValidations([NotNull] string etag)
         {
-            if (_options.ETagValidator == ETagValidator.Strong)
-            {
-                return etag;
-            }
-            else
-            {
-                return $"W/{etag}";
-            }
+            return _options.ETagValidator == ETagValidator.Strong
+                   ? etag
+                   : $"W/{etag}";
         }
 
-        protected string CreateHash([NotNull] HttpContext context, [NotNull] HashAlgorithm hashAlgorithm, [NotNull] Stream inputStream)
+        protected string CreateHash([NotNull] HashAlgorithm hashAlgorithm, [NotNull] Stream inputStream)
         {
             inputStream.Position = 0;
             byte[] bytes = hashAlgorithm.ComputeHash(inputStream);
             _logger.LogDebug($"Hash has a length of [{bytes.Length}]");
-            return ParseValidations(context, $"\"{WebEncoders.Base64UrlEncode(bytes)}\"");
+            return ParseValidations($"\"{WebEncoders.Base64UrlEncode(bytes)}\"");
         }
 
         protected string GetAndAddETagToHeader([NotNull] HttpContext context)
@@ -336,11 +325,11 @@ namespace BLun.ETagMiddleware.Common
             var etag = string.Empty;
             if (ms == null)
             {
-                etag = GetResponseHash(context);
+                etag = GetResponseHash();
             }
             else
             {
-                etag = GetResponseHash(context, ms);
+                etag = GetResponseHash(ms);
             }
 
             AddEtagToHeader(context, etag);
@@ -372,7 +361,8 @@ namespace BLun.ETagMiddleware.Common
                 return false;
             }
 
-            if(IsNoCacheRequest(context)){
+            if (IsNoCacheRequest(context))
+            {
                 _logger.LogDebug($"The HttpHeader [{HeaderNames.CacheControl}] deactivate ETag for this http request.");
                 return false;
             }
