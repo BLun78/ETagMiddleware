@@ -228,7 +228,7 @@ namespace BLun.ETagMiddleware.Common
         protected string CreateETagAndAddToHeader(HttpContext context, Stream ms)
         {
             var etag = string.Empty;
-            if (context.Response.Body.Length == 0)
+            if (ms.Length == 0)
             {
                 etag = GetAndAddETagToHeader(context);
                 _logger.LogDebug($"Response has no body-content, fast etag is set to [{etag}]");
