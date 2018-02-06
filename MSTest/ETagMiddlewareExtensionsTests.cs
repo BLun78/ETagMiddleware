@@ -1,8 +1,8 @@
 using System;
 using BLun.ETagMiddleware;
+using ETagMiddlewareTest.Common;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;
@@ -12,22 +12,11 @@ namespace ETagMiddlewareTest
     [TestClass]
     public class ETagMiddlewareExtensionsTests
     {
-
-        internal ILoggerFactory CreateILoggerFactory()
-        {
-            var loggerFactory = Substitute.For<ILoggerFactory>();
-            var logger = Substitute.For<ILogger>();
-
-            loggerFactory.CreateLogger<ETagMiddleware>().Returns(logger);
-
-            return loggerFactory;
-        }
-
         [TestMethod]
         public void UseETag_Without_Param_Ok()
         {
             // arange
-            var loggerFactory = CreateILoggerFactory();
+            var loggerFactory = LoggerMock.CreateILoggerFactory();
             var etagOption = Substitute.For<IOptions<ETagOption>>();
             var etagMiddleware = Substitute.For<ETagMiddleware>(etagOption, loggerFactory);
             var app = Substitute.For<IApplicationBuilder>();

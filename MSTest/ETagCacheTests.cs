@@ -81,7 +81,6 @@ namespace ETagMiddlewareTest
             Assert.Fail("No Exception");
         }
 
-
         [TestMethod]
         public void Create_Check_Ctor_Created_Types_Ok()
         {

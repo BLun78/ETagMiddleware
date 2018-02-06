@@ -10,7 +10,6 @@ namespace ETagMiddlewareTest.Common
 {
     internal sealed class TestETagCache : ETagCache
     {
-
         public TestETagCache(IOptions<ETagOption> options,
             ILoggerFactory loggerFactory)
             : base(options,
