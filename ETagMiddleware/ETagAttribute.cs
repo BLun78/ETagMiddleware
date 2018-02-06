@@ -11,7 +11,7 @@ namespace BLun.ETagMiddleware
     [AttributeUsage(AttributeTargets.Method | AttributeTargets.Class)]
     public class ETagAttribute : Attribute, IAsyncActionFilter
     {
-        private bool isSetETagAlgorithm;
+        private bool _isSetETagAlgorithm;
         private ETagAlgorithm eTagAlgorithm;
         public ETagAlgorithm ETagAlgorithm
         {
@@ -22,12 +22,12 @@ namespace BLun.ETagMiddleware
 
             set
             {
-                isSetETagAlgorithm = true;
+                _isSetETagAlgorithm = true;
                 eTagAlgorithm = value;
             }
         }
 
-        private bool isSetETagValidator;
+        private bool _isSetETagValidator;
         private ETagValidator eTagValidator;
         public ETagValidator ETagValidator
         {
@@ -38,12 +38,12 @@ namespace BLun.ETagMiddleware
 
             set
             {
-                isSetETagValidator = true;
+                _isSetETagValidator = true;
                 eTagValidator = value;
             }
         }
 
-        private bool isSetBodyMaxLength;
+        private bool _isSetBodyMaxLength;
         private long bodyMaxLength;
         public long BodyMaxLength
         {
@@ -54,7 +54,7 @@ namespace BLun.ETagMiddleware
 
             set
             {
-                isSetBodyMaxLength = true;
+                _isSetBodyMaxLength = true;
                 bodyMaxLength = value;
             }
         }
@@ -74,20 +74,20 @@ namespace BLun.ETagMiddleware
                 etagOption.ETagAlgorithm = options.Value.ETagAlgorithm;
             }
 
-            if (isSetBodyMaxLength)
+            if (_isSetBodyMaxLength)
             {
                 etagOption.BodyMaxLength = BodyMaxLength;
             }
-            if (isSetETagValidator)
+            if (_isSetETagValidator)
             {
                 etagOption.ETagValidator = ETagValidator;
             }
-            if (isSetETagAlgorithm)
+            if (_isSetETagAlgorithm)
             {
                 etagOption.ETagAlgorithm = ETagAlgorithm;
             }
 
-            IAsyncActionFilter etag = new ETagCache(etagOption, loggerFactory.CreateLogger<ETagAttribute>());
+            IAsyncActionFilter etag = new ETagCacheActionFilter(etagOption, loggerFactory.CreateLogger<ETagAttribute>());
 
             return etag.OnActionExecutionAsync(context, next);
         }

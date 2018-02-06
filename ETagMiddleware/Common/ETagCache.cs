@@ -2,10 +2,8 @@
 using System.IO;
 using System.Security.Cryptography;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using JetBrains.Annotations;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -17,7 +15,7 @@ namespace BLun.ETagMiddleware.Common
     /// <summary>
     /// Enables ETag middleware for request
     /// </summary>
-    internal class ETagCache : IMiddleware, IAsyncActionFilter
+    internal abstract class ETagCache
     {
         protected const string NoContentBodyHash = "\"z4PhNX7vuL3xVChQ1m2AB9Yg5AULVxXcg_SpIdNs6c5H0NE8XYXysP-DGNKHfuwvY7kxvUdBeoGlODJ6-SfaPg\"";
         protected readonly ILogger _logger;
@@ -54,118 +52,6 @@ namespace BLun.ETagMiddleware.Common
 
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _logger.LogDebug($"The Etag algorithm is [{_options.ETagAlgorithm.ToString()}] and [{_options.ETagValidator.ToString()}] ETag Validator - MaxBodyLength=[{_options.BodyMaxLength}]");
-        }
-
-        /// <summary>
-        /// Processes a request to do the ETag handshake
-        /// </summary>
-        /// <param name="context"></param>
-        /// <returns></returns>
-        public async Task InvokeAsync(HttpContext context, RequestDelegate next)
-        {
-            Stream originalStream = context.Response.Body;
-            if (originalStream is MemoryStream)
-            {
-                // Call the next delegate/middleware in the pipeline
-                await next(context);
-                try
-                {
-                    ManageEtag(context, originalStream);
-                }
-                catch (Exception e)
-                {
-                    _logger.LogError($"In BLun.ETagMiddleware is an error happend! >> Exception [{e}]", e);
-                }
-                finally
-                {
-                    if (context.Response.StatusCode == 200)
-                    {
-                        originalStream.Position = 0;
-                    }
-                }
-            }
-            else
-            {
-                using (var ms = new MemoryStream())
-                {
-                    context.Response.Body = ms;
-
-                    // Call the next delegate/middleware in the pipeline
-                    await next(context);
-                    try
-                    {
-                        ManageEtag(context, ms);
-                    }
-                    catch (Exception e)
-                    {
-                        _logger.LogError($"In BLun.ETagMiddleware is an error happend! >> Exception [{e}]", e);
-                    }
-                    finally
-                    {
-                        if (context.Response.StatusCode == 200)
-                        {
-                            ms.Position = 0;
-                            await ms.CopyToAsync(originalStream);
-                        }
-                    }
-                }
-            }
-        }
-
-        /// <summary>
-        /// Processes a request to do the ETag handshake
-        /// </summary>
-        /// <param name="context"></param>
-        /// <returns></returns>
-        public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
-        {
-            Stream originalStream = context.HttpContext.Response.Body;
-            if (originalStream is MemoryStream)
-            {
-                // Call the next delegate/middleware in the pipeline
-                await next();
-                try
-                {
-                    ManageEtag(context.HttpContext, originalStream);
-                }
-                catch (Exception e)
-                {
-                    _logger.LogError($"In BLun.ETagAttribute is an error happend! >> Exception [{e}]", e);
-                }
-                finally
-                {
-                    if (context.HttpContext.Response.StatusCode == 200)
-                    {
-                        originalStream.Position = 0;
-                    }
-                }
-            }
-            else
-            {
-                using (var ms = new MemoryStream())
-                {
-                    context.HttpContext.Response.Body = ms;
-
-                    // Call the next delegate/middleware in the pipeline
-                    await next();
-                    try
-                    {
-                        ManageEtag(context.HttpContext, ms);
-                    }
-                    catch (Exception e)
-                    {
-                        _logger.LogError($"In BLun.ETagAttribute is an error happend! >> Exception [{e}]", e);
-                    }
-                    finally
-                    {
-                        if (context.HttpContext.Response.StatusCode == 200)
-                        {
-                            ms.Position = 0;
-                            await ms.CopyToAsync(originalStream);
-                        }
-                    }
-                }
-            }
         }
 
         protected void ManageEtag([NotNull] HttpContext context, [NotNull] Stream ms)

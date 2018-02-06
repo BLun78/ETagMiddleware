@@ -12,13 +12,13 @@ namespace BLun.ETagMiddleware
     /// </summary>
     public class ETagMiddleware : IMiddleware
     {
-        private readonly IMiddleware etag;
+        private readonly IMiddleware _etag;
 
         public ETagMiddleware(
             [NotNull] IOptions<ETagOption> options,
             [NotNull] ILoggerFactory loggerFactory) 
         {
-            etag = new ETagCache(options, loggerFactory.CreateLogger<ETagMiddleware>());
+            _etag = new ETagCacheMiddleware(options, loggerFactory.CreateLogger<ETagMiddleware>());
         }
 
         /// <summary>
@@ -28,7 +28,7 @@ namespace BLun.ETagMiddleware
         /// <returns></returns>
         public Task InvokeAsync(HttpContext context, RequestDelegate next)
         {
-            return etag.InvokeAsync(context, next);
+            return _etag.InvokeAsync(context, next);
         }
     }
 }

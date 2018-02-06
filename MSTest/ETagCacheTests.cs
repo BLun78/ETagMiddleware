@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 using BLun.ETagMiddleware;
-using BLun.ETagMiddleware.Common;
+using ETagMiddlewareTest.Common;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -15,53 +15,6 @@ namespace ETagMiddlewareTest
     [TestClass]
     public class ETagCacheTests
     {
-        private sealed class TestETagCache : ETagCache
-        {
-
-            public TestETagCache(IOptions<ETagOption> options,
-                            ILoggerFactory loggerFactory)
-                : base(options,
-                       loggerFactory.CreateLogger<TestETagCache>())
-            {
-            }
-
-            public ETagOption Options => this._options;
-            public ILogger Logger => this._logger;
-            public void BaseManageEtag(HttpContext context, Stream ms) => base.ManageEtag(context, ms);
-            public StringValues BaseGetLastModified(HttpContext context) => base.GetLastModified(context);
-            public StringValues BaseGetIfModifiedSince(HttpContext context) => base.GetIfModifiedSince(context);
-            public StringValues BaseGetIfNoneMatch(HttpContext context) => base.GetIfNoneMatch(context);
-            public StringValues BaseGetCacheControl(HttpContext context) => base.GetCacheControl(context);
-            public string BaseCreateETagAndAddToHeader(HttpContext context, Stream ms)
-                        => base.CreateETagAndAddToHeader(context, ms);
-            public void BaseCheckETagAndSetHttpStatusCode(HttpContext context, string requestEtag, string etag)
-                        => base.CheckETagAndSetHttpStatusCode(context, requestEtag, etag);
-            public bool BaseIsNoCacheRequest(HttpContext context) => base.IsNoCacheRequest(context);
-            public string BaseGetResponseHash() => base.GetResponseHash();
-            public string BaseGetResponseHash(Stream inputStream) => base.GetResponseHash(inputStream);
-            public string BaseParseValidations(string etag) => base.ParseValidations(etag);
-            public string BaseGetAndAddETagToHeader(HttpContext context) => base.GetAndAddETagToHeader(context);
-            public string BaseGetAndAddETagToHeader(HttpContext context, Stream ms) => GetAndAddETagToHeader(context, ms);
-            public void BaseAddEtagToHeader(HttpContext context, string etag) => base.AddEtagToHeader(context, etag);
-            public bool BaseIsMethodNotAllowed(string methods) => base.IsMethodNotAllowed(methods);
-            public bool BaseIsEtagSupported(HttpContext context) => base.IsEtagSupportedOrNeeded(context);
-        }
-
-        internal ILoggerFactory CreateILoggerFactory(params Action<ILogger>[] actions)
-        {
-            var loggerFactory = Substitute.For<ILoggerFactory>();
-            var logger = Substitute.For<ILogger<ETagCacheTests>>();
-
-            foreach (var action in actions)
-            {
-                action?.Invoke(logger);
-            }
-
-            loggerFactory.CreateLogger<ETagCacheTests>().Returns(logger);
-
-            return loggerFactory;
-        }
-
         #region Ctor Tests
 
         [TestMethod]
@@ -87,7 +40,7 @@ namespace ETagMiddlewareTest
             IOptions<ETagOption> options = Options.Create(etagOption);
 
             // act
-            var etag = new TestETagCache(options, CreateILoggerFactory());
+            var etag = new TestETagCache(options, LoggerMock.CreateILoggerFactory());
 
             // assert
             Assert.AreNotEqual(length, etag.Options.BodyMaxLength);
@@ -139,7 +92,7 @@ namespace ETagMiddlewareTest
             IOptions<ETagOption> options = Options.Create(etagOption);
 
             // act
-            var etag = new TestETagCache(options, CreateILoggerFactory());
+            var etag = new TestETagCache(options, LoggerMock.CreateILoggerFactory());
 
             // assert
             Assert.IsNotNull(etag.Logger);
@@ -157,7 +110,7 @@ namespace ETagMiddlewareTest
             long length = 100;
             ETagOption etagOption = new ETagOption() { BodyMaxLength = length, ETagAlgorithm = ETagAlgorithm.SHA1, ETagValidator = ETagValidator.Strong };
             IOptions<ETagOption> options = Options.Create(etagOption);
-            var etag = new TestETagCache(options, CreateILoggerFactory());
+            var etag = new TestETagCache(options, LoggerMock.CreateILoggerFactory());
 
             var response = Substitute.For<HttpResponse>();
             response.Body.Returns(Substitute.For<Stream>());
@@ -188,7 +141,7 @@ namespace ETagMiddlewareTest
             long length = 100;
             ETagOption etagOption = new ETagOption() { BodyMaxLength = length, ETagAlgorithm = ETagAlgorithm.SHA1, ETagValidator = ETagValidator.Strong };
             IOptions<ETagOption> options = Options.Create(etagOption);
-            var etag = new TestETagCache(options, CreateILoggerFactory());
+            var etag = new TestETagCache(options, LoggerMock.CreateILoggerFactory());
 
             var response = Substitute.For<HttpResponse>();
             response.Body.Returns(Substitute.For<Stream>());
@@ -219,7 +172,7 @@ namespace ETagMiddlewareTest
             long length = 100;
             ETagOption etagOption = new ETagOption() { BodyMaxLength = length, ETagAlgorithm = ETagAlgorithm.SHA1, ETagValidator = ETagValidator.Strong };
             IOptions<ETagOption> options = Options.Create(etagOption);
-            var etag = new TestETagCache(options, CreateILoggerFactory());
+            var etag = new TestETagCache(options, LoggerMock.CreateILoggerFactory());
 
             var response = Substitute.For<HttpResponse>();
             response.Body.Returns(Substitute.For<Stream>());
@@ -250,7 +203,7 @@ namespace ETagMiddlewareTest
             long length = 100;
             ETagOption etagOption = new ETagOption() { BodyMaxLength = length, ETagAlgorithm = ETagAlgorithm.SHA1, ETagValidator = ETagValidator.Strong };
             IOptions<ETagOption> options = Options.Create(etagOption);
-            var etag = new TestETagCache(options, CreateILoggerFactory());
+            var etag = new TestETagCache(options, LoggerMock.CreateILoggerFactory());
 
             var response = Substitute.For<HttpResponse>();
             response.Body.Returns(Substitute.For<Stream>());
@@ -281,7 +234,7 @@ namespace ETagMiddlewareTest
             long length = 100;
             ETagOption etagOption = new ETagOption() { BodyMaxLength = length, ETagAlgorithm = ETagAlgorithm.SHA1, ETagValidator = ETagValidator.Strong };
             IOptions<ETagOption> options = Options.Create(etagOption);
-            var etag = new TestETagCache(options, CreateILoggerFactory());
+            var etag = new TestETagCache(options, LoggerMock.CreateILoggerFactory());
 
             var response = Substitute.For<HttpResponse>();
             response.Body.Returns(Substitute.For<Stream>());
@@ -312,7 +265,7 @@ namespace ETagMiddlewareTest
             long length = 100;
             ETagOption etagOption = new ETagOption() { BodyMaxLength = length, ETagAlgorithm = ETagAlgorithm.SHA1, ETagValidator = ETagValidator.Strong };
             IOptions<ETagOption> options = Options.Create(etagOption);
-            var etag = new TestETagCache(options, CreateILoggerFactory());
+            var etag = new TestETagCache(options, LoggerMock.CreateILoggerFactory());
 
             var response = Substitute.For<HttpResponse>();
             response.Body.Returns(Substitute.For<Stream>());
@@ -349,7 +302,7 @@ namespace ETagMiddlewareTest
             ETagOption etagOption = new ETagOption() { BodyMaxLength = length, ETagAlgorithm = ETagAlgorithm.SHA1, ETagValidator = ETagValidator.Strong };
 
             IOptions<ETagOption> options = Options.Create(etagOption);
-            var etag = new TestETagCache(options, CreateILoggerFactory());
+            var etag = new TestETagCache(options, LoggerMock.CreateILoggerFactory());
 
             var response = Substitute.For<HttpResponse>();
             response.Body.Returns(Substitute.For<Stream>());
@@ -385,7 +338,7 @@ namespace ETagMiddlewareTest
             ETagOption etagOption = new ETagOption() { BodyMaxLength = length, ETagAlgorithm = ETagAlgorithm.SHA1, ETagValidator = ETagValidator.Strong };
 
             IOptions<ETagOption> options = Options.Create(etagOption);
-            var etag = new TestETagCache(options, CreateILoggerFactory());
+            var etag = new TestETagCache(options, LoggerMock.CreateILoggerFactory());
 
             var response = Substitute.For<HttpResponse>();
             response.Body.Returns(Substitute.For<Stream>());
@@ -429,7 +382,7 @@ namespace ETagMiddlewareTest
             ETagOption etagOption = new ETagOption() { BodyMaxLength = length, ETagAlgorithm = ETagAlgorithm.SHA1, ETagValidator = ETagValidator.Strong };
 
             IOptions<ETagOption> options = Options.Create(etagOption);
-            var etag = new TestETagCache(options, CreateILoggerFactory());
+            var etag = new TestETagCache(options, LoggerMock.CreateILoggerFactory());
 
             var response = Substitute.For<HttpResponse>();
             response.Body.Returns(Substitute.For<Stream>());
@@ -478,7 +431,7 @@ namespace ETagMiddlewareTest
             ETagOption etagOption = new ETagOption() { BodyMaxLength = length, ETagAlgorithm = ETagAlgorithm.SHA1, ETagValidator = ETagValidator.Strong };
 
             IOptions<ETagOption> options = Options.Create(etagOption);
-            var etag = new TestETagCache(options, CreateILoggerFactory());
+            var etag = new TestETagCache(options, LoggerMock.CreateILoggerFactory());
 
             var response = Substitute.For<HttpResponse>();
             response.Body.Returns(Substitute.For<Stream>());
@@ -522,7 +475,7 @@ namespace ETagMiddlewareTest
             ETagOption etagOption = new ETagOption() { BodyMaxLength = length, ETagAlgorithm = ETagAlgorithm.SHA1, ETagValidator = ETagValidator.Strong };
 
             IOptions<ETagOption> options = Options.Create(etagOption);
-            var etag = new TestETagCache(options, CreateILoggerFactory());
+            var etag = new TestETagCache(options, LoggerMock.CreateILoggerFactory());
 
             var response = Substitute.For<HttpResponse>();
             response.Body.Returns(Substitute.For<Stream>());
@@ -571,7 +524,7 @@ namespace ETagMiddlewareTest
             ETagOption etagOption = new ETagOption() { BodyMaxLength = length, ETagAlgorithm = ETagAlgorithm.SHA1, ETagValidator = ETagValidator.Strong };
 
             IOptions<ETagOption> options = Options.Create(etagOption);
-            var etag = new TestETagCache(options, CreateILoggerFactory());
+            var etag = new TestETagCache(options, LoggerMock.CreateILoggerFactory());
 
             var response = Substitute.For<HttpResponse>();
             response.Body.Returns(Substitute.For<Stream>());
@@ -615,7 +568,7 @@ namespace ETagMiddlewareTest
             ETagOption etagOption = new ETagOption() { BodyMaxLength = length, ETagAlgorithm = ETagAlgorithm.SHA1, ETagValidator = ETagValidator.Strong };
 
             IOptions<ETagOption> options = Options.Create(etagOption);
-            var etag = new TestETagCache(options, CreateILoggerFactory());
+            var etag = new TestETagCache(options, LoggerMock.CreateILoggerFactory());
 
             var response = Substitute.For<HttpResponse>();
             response.Body.Returns(Substitute.For<Stream>());
@@ -664,7 +617,7 @@ namespace ETagMiddlewareTest
             ETagOption etagOption = new ETagOption() { BodyMaxLength = length, ETagAlgorithm = ETagAlgorithm.SHA1, ETagValidator = ETagValidator.Strong };
 
             IOptions<ETagOption> options = Options.Create(etagOption);
-            var etag = new TestETagCache(options, CreateILoggerFactory());
+            var etag = new TestETagCache(options, LoggerMock.CreateILoggerFactory());
 
             var response = Substitute.For<HttpResponse>();
             response.Body.Returns(Substitute.For<Stream>());
@@ -708,7 +661,7 @@ namespace ETagMiddlewareTest
             ETagOption etagOption = new ETagOption() { BodyMaxLength = length, ETagAlgorithm = ETagAlgorithm.SHA1, ETagValidator = ETagValidator.Strong };
 
             IOptions<ETagOption> options = Options.Create(etagOption);
-            var etag = new TestETagCache(options, CreateILoggerFactory());
+            var etag = new TestETagCache(options, LoggerMock.CreateILoggerFactory());
 
             var response = Substitute.For<HttpResponse>();
             response.Body.Returns(Substitute.For<Stream>());
@@ -758,7 +711,7 @@ namespace ETagMiddlewareTest
             ETagOption etagOption = new ETagOption() { BodyMaxLength = length, ETagAlgorithm = ETagAlgorithm.SHA1, ETagValidator = ETagValidator.Strong };
 
             IOptions<ETagOption> options = Options.Create(etagOption);
-            var etag = new TestETagCache(options, CreateILoggerFactory());
+            var etag = new TestETagCache(options, LoggerMock.CreateILoggerFactory());
 
             var response = Substitute.For<HttpResponse>();
             response.Body.Returns(Substitute.For<Stream>());
@@ -792,7 +745,7 @@ namespace ETagMiddlewareTest
             ETagOption etagOption = new ETagOption() { BodyMaxLength = length, ETagAlgorithm = ETagAlgorithm.SHA521, ETagValidator = ETagValidator.Strong };
 
             IOptions<ETagOption> options = Options.Create(etagOption);
-            var etag = new TestETagCache(options, CreateILoggerFactory());
+            var etag = new TestETagCache(options, LoggerMock.CreateILoggerFactory());
 
             var response = Substitute.For<HttpResponse>();
             response.Body.Returns(Substitute.For<Stream>());
