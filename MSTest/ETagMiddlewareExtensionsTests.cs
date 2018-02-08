@@ -16,7 +16,7 @@ namespace ETagMiddlewareTest
         public void UseETag_Without_Param_Ok()
         {
             // arange
-            var loggerFactory = LoggerMock.CreateILoggerFactory();
+            var loggerFactory = MockHelper.CreateILoggerFactory();
             var etagOption = Substitute.For<IOptions<ETagOption>>();
             var etagMiddleware = Substitute.For<ETagMiddleware>(etagOption, loggerFactory);
             var app = Substitute.For<IApplicationBuilder>();

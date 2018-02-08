@@ -40,7 +40,7 @@ namespace ETagMiddlewareTest
             IOptions<ETagOption> options = Options.Create(etagOption);
 
             // act
-            var etag = new TestETagCache(options, LoggerMock.CreateILoggerFactory());
+            var etag = new TestETagCache(options, MockHelper.CreateILoggerFactory());
 
             // assert
             Assert.AreNotEqual(length, etag.Options.BodyMaxLength);
@@ -91,7 +91,7 @@ namespace ETagMiddlewareTest
             IOptions<ETagOption> options = Options.Create(etagOption);
 
             // act
-            var etag = new TestETagCache(options, LoggerMock.CreateILoggerFactory());
+            var etag = new TestETagCache(options, MockHelper.CreateILoggerFactory());
 
             // assert
             Assert.IsNotNull(etag.Logger);
@@ -106,30 +106,12 @@ namespace ETagMiddlewareTest
         public void IsEtagSupported_Ok()
         {
             // arange
-            long length = 100;
-            ETagOption etagOption = new ETagOption() { BodyMaxLength = length, ETagAlgorithm = ETagAlgorithm.SHA1, ETagValidator = ETagValidator.Strong };
-            IOptions<ETagOption> options = Options.Create(etagOption);
-            var etag = new TestETagCache(options, LoggerMock.CreateILoggerFactory());
-
-            var response = Substitute.For<HttpResponse>();
-            response.Body.Returns(Substitute.For<Stream>());
-            response.Body.Length.ReturnsForAnyArgs(length);
-            response.StatusCode.Returns<int>(200);
-            response.Headers.ContainsKey(HeaderNames.ETag).ReturnsForAnyArgs(false);
-
-            var context = Substitute.For<HttpContext>();
-            context.Response.Returns(response);
-
-            var request = Substitute.For<HttpRequest>();
-            request.Method.Returns(HttpMethods.Get);
-            context.Request.Returns(request);
+            var etag = MockHelper.CreateETagCacheMock(out var context);
 
             // act
             var result = etag.BaseIsEtagSupported(context);
 
             // assert
-            Assert.IsNotNull(etag.Logger);
-            Assert.AreEqual(length, etag.Options.BodyMaxLength);
             Assert.IsTrue(result);
         }
 
@@ -137,30 +119,14 @@ namespace ETagMiddlewareTest
         public void IsEtagSupported_StatusCode_100_NOk()
         {
             // arange
-            long length = 100;
-            ETagOption etagOption = new ETagOption() { BodyMaxLength = length, ETagAlgorithm = ETagAlgorithm.SHA1, ETagValidator = ETagValidator.Strong };
-            IOptions<ETagOption> options = Options.Create(etagOption);
-            var etag = new TestETagCache(options, LoggerMock.CreateILoggerFactory());
+            var etag = MockHelper.CreateETagCacheMock(out var context);
 
-            var response = Substitute.For<HttpResponse>();
-            response.Body.Returns(Substitute.For<Stream>());
-            response.Body.Length.ReturnsForAnyArgs(length);
-            response.StatusCode.Returns<int>(100);
-            response.Headers.ContainsKey(HeaderNames.ETag).ReturnsForAnyArgs(false);
-
-            var context = Substitute.For<HttpContext>();
-            context.Response.Returns(response);
-
-            var request = Substitute.For<HttpRequest>();
-            request.Method.Returns(HttpMethods.Get);
-            context.Request.Returns(request);
+            context.Response.StatusCode.Returns<int>(100);
 
             // act
             var result = etag.BaseIsEtagSupported(context);
 
             // assert
-            Assert.IsNotNull(etag.Logger);
-            Assert.AreEqual(length, etag.Options.BodyMaxLength);
             Assert.IsFalse(result);
         }
 
@@ -168,30 +134,14 @@ namespace ETagMiddlewareTest
         public void IsEtagSupported_HttpMethods_Post_NOk()
         {
             // arange
-            long length = 100;
-            ETagOption etagOption = new ETagOption() { BodyMaxLength = length, ETagAlgorithm = ETagAlgorithm.SHA1, ETagValidator = ETagValidator.Strong };
-            IOptions<ETagOption> options = Options.Create(etagOption);
-            var etag = new TestETagCache(options, LoggerMock.CreateILoggerFactory());
+            var etag = MockHelper.CreateETagCacheMock(out var context);
 
-            var response = Substitute.For<HttpResponse>();
-            response.Body.Returns(Substitute.For<Stream>());
-            response.Body.Length.ReturnsForAnyArgs(length);
-            response.StatusCode.Returns<int>(200);
-            response.Headers.ContainsKey(HeaderNames.ETag).ReturnsForAnyArgs(false);
-
-            var context = Substitute.For<HttpContext>();
-            context.Response.Returns(response);
-
-            var request = Substitute.For<HttpRequest>();
-            request.Method.Returns(HttpMethods.Post);
-            context.Request.Returns(request);
+            context.Request.Method.Returns(HttpMethods.Post);
 
             // act
             var result = etag.BaseIsEtagSupported(context);
 
             // assert
-            Assert.IsNotNull(etag.Logger);
-            Assert.AreEqual(length, etag.Options.BodyMaxLength);
             Assert.IsFalse(result);
         }
 
@@ -199,30 +149,14 @@ namespace ETagMiddlewareTest
         public void IsEtagSupported_StatusCode_300_NOk()
         {
             // arange
-            long length = 100;
-            ETagOption etagOption = new ETagOption() { BodyMaxLength = length, ETagAlgorithm = ETagAlgorithm.SHA1, ETagValidator = ETagValidator.Strong };
-            IOptions<ETagOption> options = Options.Create(etagOption);
-            var etag = new TestETagCache(options, LoggerMock.CreateILoggerFactory());
+            var etag = MockHelper.CreateETagCacheMock(out var context);
 
-            var response = Substitute.For<HttpResponse>();
-            response.Body.Returns(Substitute.For<Stream>());
-            response.Body.Length.ReturnsForAnyArgs(length);
-            response.StatusCode.Returns<int>(300);
-            response.Headers.ContainsKey(HeaderNames.ETag).ReturnsForAnyArgs(false);
-
-            var context = Substitute.For<HttpContext>();
-            context.Response.Returns(response);
-
-            var request = Substitute.For<HttpRequest>();
-            request.Method.Returns(HttpMethods.Get);
-            context.Request.Returns(request);
+            context.Response.StatusCode.Returns<int>(300);
 
             // act
             var result = etag.BaseIsEtagSupported(context);
 
             // assert
-            Assert.IsNotNull(etag.Logger);
-            Assert.AreEqual(length, etag.Options.BodyMaxLength);
             Assert.IsFalse(result);
         }
 
@@ -230,29 +164,15 @@ namespace ETagMiddlewareTest
         public void IsEtagSupported_BodyMaxLength_NOk()
         {
             // arange
+            var etag = MockHelper.CreateETagCacheMock(out var context);
+
             long length = 100;
-            ETagOption etagOption = new ETagOption() { BodyMaxLength = length, ETagAlgorithm = ETagAlgorithm.SHA1, ETagValidator = ETagValidator.Strong };
-            IOptions<ETagOption> options = Options.Create(etagOption);
-            var etag = new TestETagCache(options, LoggerMock.CreateILoggerFactory());
-
-            var response = Substitute.For<HttpResponse>();
-            response.Body.Returns(Substitute.For<Stream>());
-            response.Body.Length.ReturnsForAnyArgs(length + 10);
-            response.StatusCode.Returns<int>(200);
-            response.Headers.ContainsKey(HeaderNames.ETag).ReturnsForAnyArgs(false);
-
-            var context = Substitute.For<HttpContext>();
-            context.Response.Returns(response);
-
-            var request = Substitute.For<HttpRequest>();
-            request.Method.Returns(HttpMethods.Get);
-            context.Request.Returns(request);
-
+            context.Response.Body.Length.ReturnsForAnyArgs(length + 10);
+           
             // act
             var result = etag.BaseIsEtagSupported(context);
 
             // assert
-            Assert.IsNotNull(etag.Logger);
             Assert.AreEqual(length, etag.Options.BodyMaxLength);
             Assert.IsFalse(result);
         }
@@ -261,30 +181,14 @@ namespace ETagMiddlewareTest
         public void IsEtagSupported_Headers_NOk()
         {
             // arange
-            long length = 100;
-            ETagOption etagOption = new ETagOption() { BodyMaxLength = length, ETagAlgorithm = ETagAlgorithm.SHA1, ETagValidator = ETagValidator.Strong };
-            IOptions<ETagOption> options = Options.Create(etagOption);
-            var etag = new TestETagCache(options, LoggerMock.CreateILoggerFactory());
+            var etag = MockHelper.CreateETagCacheMock(out var context);
 
-            var response = Substitute.For<HttpResponse>();
-            response.Body.Returns(Substitute.For<Stream>());
-            response.Body.Length.ReturnsForAnyArgs(length);
-            response.StatusCode.Returns<int>(200);
-            response.Headers.ContainsKey(HeaderNames.ETag).ReturnsForAnyArgs(true);
-
-            var context = Substitute.For<HttpContext>();
-            context.Response.Returns(response);
-
-            var request = Substitute.For<HttpRequest>();
-            request.Method.Returns(HttpMethods.Get);
-            context.Request.Returns(request);
+            context.Response.Headers.ContainsKey(HeaderNames.ETag).ReturnsForAnyArgs(true);
 
             // act
             var result = etag.BaseIsEtagSupported(context);
 
             // assert
-            Assert.IsNotNull(etag.Logger);
-            Assert.AreEqual(length, etag.Options.BodyMaxLength);
             Assert.IsFalse(result);
         }
 
@@ -297,31 +201,12 @@ namespace ETagMiddlewareTest
         {
             // arange
             var etagString = "HalloWeltEtag";
-            long length = 100;
-            ETagOption etagOption = new ETagOption() { BodyMaxLength = length, ETagAlgorithm = ETagAlgorithm.SHA1, ETagValidator = ETagValidator.Strong };
-
-            IOptions<ETagOption> options = Options.Create(etagOption);
-            var etag = new TestETagCache(options, LoggerMock.CreateILoggerFactory());
-
-            var response = Substitute.For<HttpResponse>();
-            response.Body.Returns(Substitute.For<Stream>());
-            response.Body.Length.ReturnsForAnyArgs(length);
-            response.StatusCode.Returns<int>(200);
-            response.Headers.ContainsKey(HeaderNames.ETag).ReturnsForAnyArgs(false);
-
-            var context = Substitute.For<HttpContext>();
-            context.Response.Returns(response);
-
-            var request = Substitute.For<HttpRequest>();
-            request.Method.Returns(HttpMethods.Get);
-            context.Request.Returns(request);
+            var etag = MockHelper.CreateETagCacheMock(out var context);
 
             // act
             etag.BaseAddEtagToHeader(context, "HalloWeltEtag");
 
             // assert
-            Assert.IsNotNull(etag.Logger);
-            Assert.AreEqual(length, etag.Options.BodyMaxLength);
             context.Response.Headers.Received().Add(HeaderNames.ETag, etagString);
         }
 
@@ -333,27 +218,11 @@ namespace ETagMiddlewareTest
         public void GetLastModified_Ok()
         {
             // arange
-            long length = 100;
-            ETagOption etagOption = new ETagOption() { BodyMaxLength = length, ETagAlgorithm = ETagAlgorithm.SHA1, ETagValidator = ETagValidator.Strong };
+            var etag = MockHelper.CreateETagCacheMock(out var context);
 
-            IOptions<ETagOption> options = Options.Create(etagOption);
-            var etag = new TestETagCache(options, LoggerMock.CreateILoggerFactory());
-
-            var response = Substitute.For<HttpResponse>();
-            response.Body.Returns(Substitute.For<Stream>());
-            response.Body.Length.ReturnsForAnyArgs(length);
-            response.StatusCode.Returns<int>(200);
-            response.Headers.ContainsKey(HeaderNames.ETag).ReturnsForAnyArgs(false);
-
-            var context = Substitute.For<HttpContext>();
-            context.Response.Returns(response);
-
-            var request = Substitute.For<HttpRequest>();
-            request.Method.Returns(HttpMethods.Get);
-            request.Headers.Returns(Substitute.For<IHeaderDictionary>());
             StringValues outValue;
             var name = HeaderNames.LastModified;
-            request.Headers.TryGetValue(name, out outValue).ReturnsForAnyArgs(x =>
+            context.Request.Headers.TryGetValue(name, out outValue).ReturnsForAnyArgs(x =>
             {
                 if (((string)x[0]) == name)
                 {
@@ -362,14 +231,12 @@ namespace ETagMiddlewareTest
                 }
                 return false;
             });
-            context.Request.Returns(request);
+            context.Request.Returns(context.Request);
 
             // act
             var result = etag.BaseGetLastModified(context);
 
             // assert
-            Assert.IsNotNull(etag.Logger);
-            Assert.AreEqual(length, etag.Options.BodyMaxLength);
             Assert.AreEqual("test_Value", result.ToString());
         }
 
@@ -377,27 +244,11 @@ namespace ETagMiddlewareTest
         public void GetLastModified_NOk()
         {
             // arange
-            long length = 100;
-            ETagOption etagOption = new ETagOption() { BodyMaxLength = length, ETagAlgorithm = ETagAlgorithm.SHA1, ETagValidator = ETagValidator.Strong };
+            var etag = MockHelper.CreateETagCacheMock(out var context);
 
-            IOptions<ETagOption> options = Options.Create(etagOption);
-            var etag = new TestETagCache(options, LoggerMock.CreateILoggerFactory());
-
-            var response = Substitute.For<HttpResponse>();
-            response.Body.Returns(Substitute.For<Stream>());
-            response.Body.Length.ReturnsForAnyArgs(length);
-            response.StatusCode.Returns<int>(200);
-            response.Headers.ContainsKey(HeaderNames.ETag).ReturnsForAnyArgs(false);
-
-            var context = Substitute.For<HttpContext>();
-            context.Response.Returns(response);
-
-            var request = Substitute.For<HttpRequest>();
-            request.Method.Returns(HttpMethods.Get);
-            request.Headers.Returns(Substitute.For<IHeaderDictionary>());
             StringValues outValue;
-            var name = HeaderNames.LastModified;
-            request.Headers.TryGetValue(name, out outValue).ReturnsForAnyArgs(x =>
+            const string name = HeaderNames.LastModified;
+            context.Request.Headers.TryGetValue(name, out outValue).ReturnsForAnyArgs(x =>
             {
                 if (((string)x[0]) != name)
                 {
@@ -406,14 +257,12 @@ namespace ETagMiddlewareTest
                 }
                 return false;
             });
-            context.Request.Returns(request);
+            context.Request.Returns(context.Request);
 
             // act
             var result = etag.BaseGetLastModified(context);
 
             // assert
-            Assert.IsNotNull(etag.Logger);
-            Assert.AreEqual(length, etag.Options.BodyMaxLength);
             Assert.AreNotEqual("test_Value", result.ToString());
             Assert.AreEqual("", result.ToString());
         }
@@ -426,27 +275,11 @@ namespace ETagMiddlewareTest
         public void GetIfModifiedSince_Ok()
         {
             // arange
-            long length = 100;
-            ETagOption etagOption = new ETagOption() { BodyMaxLength = length, ETagAlgorithm = ETagAlgorithm.SHA1, ETagValidator = ETagValidator.Strong };
+            var etag = MockHelper.CreateETagCacheMock(out var context);
 
-            IOptions<ETagOption> options = Options.Create(etagOption);
-            var etag = new TestETagCache(options, LoggerMock.CreateILoggerFactory());
-
-            var response = Substitute.For<HttpResponse>();
-            response.Body.Returns(Substitute.For<Stream>());
-            response.Body.Length.ReturnsForAnyArgs(length);
-            response.StatusCode.Returns<int>(200);
-            response.Headers.ContainsKey(HeaderNames.ETag).ReturnsForAnyArgs(false);
-
-            var context = Substitute.For<HttpContext>();
-            context.Response.Returns(response);
-
-            var request = Substitute.For<HttpRequest>();
-            request.Method.Returns(HttpMethods.Get);
-            request.Headers.Returns(Substitute.For<IHeaderDictionary>());
             StringValues outValue;
-            var name = HeaderNames.IfModifiedSince;
-            request.Headers.TryGetValue(name, out outValue).ReturnsForAnyArgs(x =>
+            const string name = HeaderNames.IfModifiedSince;
+            context.Request.Headers.TryGetValue(name, out outValue).ReturnsForAnyArgs(x =>
             {
                 if (((string)x[0]) == name)
                 {
@@ -455,14 +288,12 @@ namespace ETagMiddlewareTest
                 }
                 return false;
             });
-            context.Request.Returns(request);
+            context.Request.Returns(context.Request);
 
             // act
             var result = etag.BaseGetIfModifiedSince(context);
 
             // assert
-            Assert.IsNotNull(etag.Logger);
-            Assert.AreEqual(length, etag.Options.BodyMaxLength);
             Assert.AreEqual("test_Value", result.ToString());
         }
 
@@ -470,27 +301,11 @@ namespace ETagMiddlewareTest
         public void GetIfModifiedSince_NOk()
         {
             // arange
-            long length = 100;
-            ETagOption etagOption = new ETagOption() { BodyMaxLength = length, ETagAlgorithm = ETagAlgorithm.SHA1, ETagValidator = ETagValidator.Strong };
+            var etag = MockHelper.CreateETagCacheMock(out var context);
 
-            IOptions<ETagOption> options = Options.Create(etagOption);
-            var etag = new TestETagCache(options, LoggerMock.CreateILoggerFactory());
-
-            var response = Substitute.For<HttpResponse>();
-            response.Body.Returns(Substitute.For<Stream>());
-            response.Body.Length.ReturnsForAnyArgs(length);
-            response.StatusCode.Returns<int>(200);
-            response.Headers.ContainsKey(HeaderNames.ETag).ReturnsForAnyArgs(false);
-
-            var context = Substitute.For<HttpContext>();
-            context.Response.Returns(response);
-
-            var request = Substitute.For<HttpRequest>();
-            request.Method.Returns(HttpMethods.Get);
-            request.Headers.Returns(Substitute.For<IHeaderDictionary>());
             StringValues outValue;
-            var name = HeaderNames.IfModifiedSince;
-            request.Headers.TryGetValue(name, out outValue).ReturnsForAnyArgs(x =>
+            const string name = HeaderNames.IfModifiedSince;
+            context.Request.Headers.TryGetValue(name, out outValue).ReturnsForAnyArgs(x =>
             {
                 if (((string)x[0]) != name)
                 {
@@ -499,14 +314,12 @@ namespace ETagMiddlewareTest
                 }
                 return false;
             });
-            context.Request.Returns(request);
+            context.Request.Returns(context.Request);
 
             // act
             var result = etag.BaseGetIfModifiedSince(context);
 
             // assert
-            Assert.IsNotNull(etag.Logger);
-            Assert.AreEqual(length, etag.Options.BodyMaxLength);
             Assert.AreNotEqual("test_Value", result.ToString());
             Assert.AreEqual("", result.ToString());
         }
@@ -519,27 +332,11 @@ namespace ETagMiddlewareTest
         public void GetIfNoneMatch_Ok()
         {
             // arange
-            long length = 100;
-            ETagOption etagOption = new ETagOption() { BodyMaxLength = length, ETagAlgorithm = ETagAlgorithm.SHA1, ETagValidator = ETagValidator.Strong };
+            var etag = MockHelper.CreateETagCacheMock(out var context);
 
-            IOptions<ETagOption> options = Options.Create(etagOption);
-            var etag = new TestETagCache(options, LoggerMock.CreateILoggerFactory());
-
-            var response = Substitute.For<HttpResponse>();
-            response.Body.Returns(Substitute.For<Stream>());
-            response.Body.Length.ReturnsForAnyArgs(length);
-            response.StatusCode.Returns<int>(200);
-            response.Headers.ContainsKey(HeaderNames.ETag).ReturnsForAnyArgs(false);
-
-            var context = Substitute.For<HttpContext>();
-            context.Response.Returns(response);
-
-            var request = Substitute.For<HttpRequest>();
-            request.Method.Returns(HttpMethods.Get);
-            request.Headers.Returns(Substitute.For<IHeaderDictionary>());
             StringValues outValue;
-            var name = HeaderNames.IfNoneMatch;
-            request.Headers.TryGetValue(name, out outValue).ReturnsForAnyArgs(x =>
+            const string name = HeaderNames.IfNoneMatch;
+            context.Request.Headers.TryGetValue(name, out outValue).ReturnsForAnyArgs(x =>
             {
                 if (((string)x[0]) == name)
                 {
@@ -548,14 +345,12 @@ namespace ETagMiddlewareTest
                 }
                 return false;
             });
-            context.Request.Returns(request);
+            context.Request.Returns(context.Request);
 
             // act
             var result = etag.BaseGetIfNoneMatch(context);
 
             // assert
-            Assert.IsNotNull(etag.Logger);
-            Assert.AreEqual(length, etag.Options.BodyMaxLength);
             Assert.AreEqual("test_Value", result.ToString());
         }
 
@@ -563,27 +358,11 @@ namespace ETagMiddlewareTest
         public void GetIfNoneMatch_NOk()
         {
             // arange
-            long length = 100;
-            ETagOption etagOption = new ETagOption() { BodyMaxLength = length, ETagAlgorithm = ETagAlgorithm.SHA1, ETagValidator = ETagValidator.Strong };
+            var etag = MockHelper.CreateETagCacheMock(out var context);
 
-            IOptions<ETagOption> options = Options.Create(etagOption);
-            var etag = new TestETagCache(options, LoggerMock.CreateILoggerFactory());
-
-            var response = Substitute.For<HttpResponse>();
-            response.Body.Returns(Substitute.For<Stream>());
-            response.Body.Length.ReturnsForAnyArgs(length);
-            response.StatusCode.Returns<int>(200);
-            response.Headers.ContainsKey(HeaderNames.ETag).ReturnsForAnyArgs(false);
-
-            var context = Substitute.For<HttpContext>();
-            context.Response.Returns(response);
-
-            var request = Substitute.For<HttpRequest>();
-            request.Method.Returns(HttpMethods.Get);
-            request.Headers.Returns(Substitute.For<IHeaderDictionary>());
             StringValues outValue;
-            var name = HeaderNames.IfNoneMatch;
-            request.Headers.TryGetValue(name, out outValue).ReturnsForAnyArgs(x =>
+            const string name = HeaderNames.IfNoneMatch;
+            context.Request.Headers.TryGetValue(name, out outValue).ReturnsForAnyArgs(x =>
             {
                 if (((string)x[0]) != name)
                 {
@@ -592,14 +371,12 @@ namespace ETagMiddlewareTest
                 }
                 return false;
             });
-            context.Request.Returns(request);
+            context.Request.Returns(context.Request);
 
             // act
             var result = etag.BaseGetIfNoneMatch(context);
 
             // assert
-            Assert.IsNotNull(etag.Logger);
-            Assert.AreEqual(length, etag.Options.BodyMaxLength);
             Assert.AreNotEqual("test_Value", result.ToString());
             Assert.AreEqual("", result.ToString());
         }
@@ -612,27 +389,11 @@ namespace ETagMiddlewareTest
         public void GetCacheControl_Ok()
         {
             // arange
-            long length = 100;
-            ETagOption etagOption = new ETagOption() { BodyMaxLength = length, ETagAlgorithm = ETagAlgorithm.SHA1, ETagValidator = ETagValidator.Strong };
+            var etag = MockHelper.CreateETagCacheMock(out var context);
 
-            IOptions<ETagOption> options = Options.Create(etagOption);
-            var etag = new TestETagCache(options, LoggerMock.CreateILoggerFactory());
-
-            var response = Substitute.For<HttpResponse>();
-            response.Body.Returns(Substitute.For<Stream>());
-            response.Body.Length.ReturnsForAnyArgs(length);
-            response.StatusCode.Returns<int>(200);
-            response.Headers.ContainsKey(HeaderNames.ETag).ReturnsForAnyArgs(false);
-
-            var context = Substitute.For<HttpContext>();
-            context.Response.Returns(response);
-
-            var request = Substitute.For<HttpRequest>();
-            request.Method.Returns(HttpMethods.Get);
-            request.Headers.Returns(Substitute.For<IHeaderDictionary>());
             StringValues outValue;
-            var name = HeaderNames.CacheControl;
-            request.Headers.TryGetValue(name, out outValue).ReturnsForAnyArgs(x =>
+            const string name = HeaderNames.CacheControl;
+            context.Request.Headers.TryGetValue(name, out outValue).ReturnsForAnyArgs(x =>
             {
                 if (((string)x[0]) == name)
                 {
@@ -641,14 +402,12 @@ namespace ETagMiddlewareTest
                 }
                 return false;
             });
-            context.Request.Returns(request);
+            context.Request.Returns(context.Request);
 
             // act
             var result = etag.BaseGetCacheControl(context);
 
             // assert
-            Assert.IsNotNull(etag.Logger);
-            Assert.AreEqual(length, etag.Options.BodyMaxLength);
             Assert.AreEqual("test_Value", result.ToString());
         }
 
@@ -656,27 +415,11 @@ namespace ETagMiddlewareTest
         public void GetCacheControl_NOk()
         {
             // arange
-            long length = 100;
-            ETagOption etagOption = new ETagOption() { BodyMaxLength = length, ETagAlgorithm = ETagAlgorithm.SHA1, ETagValidator = ETagValidator.Strong };
+            var etag = MockHelper.CreateETagCacheMock(out var context);
 
-            IOptions<ETagOption> options = Options.Create(etagOption);
-            var etag = new TestETagCache(options, LoggerMock.CreateILoggerFactory());
-
-            var response = Substitute.For<HttpResponse>();
-            response.Body.Returns(Substitute.For<Stream>());
-            response.Body.Length.ReturnsForAnyArgs(length);
-            response.StatusCode.Returns<int>(200);
-            response.Headers.ContainsKey(HeaderNames.ETag).ReturnsForAnyArgs(false);
-
-            var context = Substitute.For<HttpContext>();
-            context.Response.Returns(response);
-
-            var request = Substitute.For<HttpRequest>();
-            request.Method.Returns(HttpMethods.Get);
-            request.Headers.Returns(Substitute.For<IHeaderDictionary>());
             StringValues outValue;
-            var name = HeaderNames.CacheControl;
-            request.Headers.TryGetValue(name, out outValue).ReturnsForAnyArgs(x =>
+            const string name = HeaderNames.CacheControl;
+            context.Request.Headers.TryGetValue(name, out outValue).ReturnsForAnyArgs(x =>
             {
                 if (((string)x[0]) != name)
                 {
@@ -685,17 +428,16 @@ namespace ETagMiddlewareTest
                 }
                 return false;
             });
-            context.Request.Returns(request);
+            context.Request.Returns(context.Request);
 
             // act
             var result = etag.BaseGetCacheControl(context);
 
             // assert
-            Assert.IsNotNull(etag.Logger);
-            Assert.AreEqual(length, etag.Options.BodyMaxLength);
             Assert.AreNotEqual("test_Value", result.ToString());
             Assert.AreEqual("", result.ToString());
         }
+
 
         #endregion
 
@@ -705,32 +447,14 @@ namespace ETagMiddlewareTest
         public void GetAndAddETagToHeader_1_Pratameter_Ok()
         {
             // arange
+            var etag = MockHelper.CreateETagCacheMock(out var context);
+
             var expected = "\"z4PhNX7vuL3xVChQ1m2AB9Yg5AULVxXcg_SpIdNs6c5H0NE8XYXysP-DGNKHfuwvY7kxvUdBeoGlODJ6-SfaPg\"";
-            long length = 100;
-            ETagOption etagOption = new ETagOption() { BodyMaxLength = length, ETagAlgorithm = ETagAlgorithm.SHA1, ETagValidator = ETagValidator.Strong };
-
-            IOptions<ETagOption> options = Options.Create(etagOption);
-            var etag = new TestETagCache(options, LoggerMock.CreateILoggerFactory());
-
-            var response = Substitute.For<HttpResponse>();
-            response.Body.Returns(Substitute.For<Stream>());
-            response.Body.Length.ReturnsForAnyArgs(length);
-            response.StatusCode.Returns<int>(200);
-            response.Headers.ContainsKey(HeaderNames.ETag).ReturnsForAnyArgs(false);
-
-            var context = Substitute.For<HttpContext>();
-            context.Response.Returns(response);
-
-            var request = Substitute.For<HttpRequest>();
-            request.Method.Returns(HttpMethods.Get);
-            context.Request.Returns(request);
 
             // act
             var result = etag.BaseGetAndAddETagToHeader(context);
 
             // assert
-            Assert.IsNotNull(etag.Logger);
-            Assert.AreEqual(length, etag.Options.BodyMaxLength);
             context.Response.Headers.Received().Add(HeaderNames.ETag,expected);
             Assert.AreEqual(expected, result);
         }
@@ -739,25 +463,9 @@ namespace ETagMiddlewareTest
         public void GetAndAddETagToHeader_2_Pratameter_Ok()
         {
             // arange
+            var etag = MockHelper.CreateETagCacheMock(out var context);
+
             var expected = "\"z4PhNX7vuL3xVChQ1m2AB9Yg5AULVxXcg_SpIdNs6c5H0NE8XYXysP-DGNKHfuwvY7kxvUdBeoGlODJ6-SfaPg\"";
-            long length = 100;
-            ETagOption etagOption = new ETagOption() { BodyMaxLength = length, ETagAlgorithm = ETagAlgorithm.SHA521, ETagValidator = ETagValidator.Strong };
-
-            IOptions<ETagOption> options = Options.Create(etagOption);
-            var etag = new TestETagCache(options, LoggerMock.CreateILoggerFactory());
-
-            var response = Substitute.For<HttpResponse>();
-            response.Body.Returns(Substitute.For<Stream>());
-            response.Body.Length.ReturnsForAnyArgs(length);
-            response.StatusCode.Returns<int>(200);
-            response.Headers.ContainsKey(HeaderNames.ETag).ReturnsForAnyArgs(false);
-
-            var context = Substitute.For<HttpContext>();
-            context.Response.Returns(response);
-
-            var request = Substitute.For<HttpRequest>();
-            request.Method.Returns(HttpMethods.Get);
-            context.Request.Returns(request);
 
             using (var ms = new MemoryStream())
             {
@@ -767,11 +475,8 @@ namespace ETagMiddlewareTest
                 var result = etag.BaseGetAndAddETagToHeader(context, ms);
 
                 // assert
-                Assert.IsNotNull(etag.Logger);
-                Assert.AreEqual(length, etag.Options.BodyMaxLength);
                 context.Response.Headers.Received().Add(HeaderNames.ETag, expected);
                 Assert.AreEqual(expected, result);
-
             }
         }
 
