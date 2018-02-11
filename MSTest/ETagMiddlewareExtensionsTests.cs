@@ -1,5 +1,6 @@
 using System;
 using BLun.ETagMiddleware;
+using BLun.ETagMiddleware.Middleware;
 using ETagMiddlewareTest.Common;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;

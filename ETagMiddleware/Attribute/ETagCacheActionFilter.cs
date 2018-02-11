@@ -1,12 +1,13 @@
 ﻿using System;
 using System.IO;
 using System.Threading.Tasks;
+using BLun.ETagMiddleware.Common;
 using JetBrains.Annotations;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
-namespace BLun.ETagMiddleware.Common
+namespace BLun.ETagMiddleware.Attribute
 {
     internal class ETagCacheActionFilter : ETagCache, IAsyncActionFilter
     {
@@ -18,11 +19,7 @@ namespace BLun.ETagMiddleware.Common
         {
         }
         
-        /// <summary>
-        /// Processes a request to do the ETag handshake
-        /// </summary>
-        /// <param name="context"></param>
-        /// <returns></returns>
+        /// <inheritdoc />
         public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
         {
             Stream originalStream = context.HttpContext.Response.Body;

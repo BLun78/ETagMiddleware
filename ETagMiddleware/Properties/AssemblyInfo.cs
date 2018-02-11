@@ -8,3 +8,4 @@ using System.Runtime.CompilerServices;
 //[assembly: AssemblyKeyFile("")]
 
 [assembly: InternalsVisibleTo("ETagMiddlewareTest") ]
+[assembly: InternalsVisibleTo("DynamicProxyGenAssembly2")]

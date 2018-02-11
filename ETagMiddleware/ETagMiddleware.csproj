@@ -23,12 +23,12 @@
     <Version>1.2.1</Version>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DocumentationFile>
-    </DocumentationFile>
+    <DocumentationFile>bin\Release\netstandard2.0\ETagMiddleware.xml</DocumentationFile>
+    <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
+    <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DocumentationFile>
-    </DocumentationFile>
+    <DocumentationFile>bin\Debug\netstandard2.0\ETagMiddleware.xml</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="JetBrains.Annotations" Version="11.1.0">
@@ -45,9 +45,8 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Common\" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Remove=".DS_Store" />
+    <Folder Include="Attribute\" />
+    <Folder Include="Middleware\" />
   </ItemGroup>
   <ItemGroup>
     <Compile Remove="Common\ETag.cs" />

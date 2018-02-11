@@ -5,15 +5,20 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
-namespace BLun.ETagMiddleware
+namespace BLun.ETagMiddleware.Middleware
 {
     /// <summary>
     /// Enables ETag middleware for request
     /// </summary>
-    public class ETagMiddleware : IMiddleware
+    internal class ETagMiddleware : IMiddleware
     {
         private readonly IMiddleware _etag;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="T:BLun.ETagMiddleware.Middleware.ETagMiddleware"/> class.
+        /// </summary>
+        /// <param name="options">Options.</param>
+        /// <param name="loggerFactory">Logger factory.</param>
         public ETagMiddleware(
             [NotNull] IOptions<ETagOption> options,
             [NotNull] ILoggerFactory loggerFactory) 
@@ -21,11 +26,7 @@ namespace BLun.ETagMiddleware
             _etag = new ETagCacheMiddleware(options, loggerFactory.CreateLogger<ETagMiddleware>());
         }
 
-        /// <summary>
-        /// Processes a request to do the ETag handshake
-        /// </summary>
-        /// <param name="context"></param>
-        /// <returns></returns>
+        /// <inheritdoc />
         public Task InvokeAsync(HttpContext context, RequestDelegate next)
         {
             return _etag.InvokeAsync(context, next);

@@ -4,11 +4,59 @@ namespace BLun.ETagMiddleware
     /// <summary>
     /// ETag option.
     /// </summary>
+    /// <example>
+    /// Default Configuration
+    /// <code>
+    /// var configuration = new ETagOption()
+    /// {
+    ///     // algorithmus
+    ///     // SHA1         = default
+    ///     // SHA265
+    ///     // SHA384
+    ///     // SHA512
+    ///     // MD5
+    ///     ETagAlgorithm = ETagAlgorithm.SHA1,
+    /// 
+    ///     // etag validator
+    ///     // Strong       = default
+    ///     // Weak
+    ///     ETagValidator = ETagValidator.Strong,
+    /// 
+    ///     // body content length
+    ///     // 40 * 1024    = default
+    ///     BodyMaxLength = 40 * 1024
+    /// };  
+    /// </code>
+    /// </example>
     public sealed class ETagOption
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="T:BLun.ETagMiddleware.ETagOption"/> class.
         /// </summary>
+        /// <example>
+        /// Default Configuration
+        /// <code>
+        /// var configuration = new ETagOption()
+        /// {
+        ///     // algorithmus
+        ///     // SHA1         = default
+        ///     // SHA265
+        ///     // SHA384
+        ///     // SHA512
+        ///     // MD5
+        ///     ETagAlgorithm = ETagAlgorithm.SHA1,
+        /// 
+        ///     // etag validator
+        ///     // Strong       = default
+        ///     // Weak
+        ///     ETagValidator = ETagValidator.Strong,
+        /// 
+        ///     // body content length
+        ///     // 40 * 1024    = default
+        ///     BodyMaxLength = 40 * 1024
+        /// };  
+        /// </code>
+        /// </example>
         public ETagOption(){
             this.BodyMaxLength = ETagMiddlewareExtensions.DefaultBodyMaxLength;
             this.ETagAlgorithm = ETagAlgorithm.SHA1;
@@ -16,12 +64,20 @@ namespace BLun.ETagMiddleware
         }
             
         /// <summary>
-        /// max Body length for Etag
+        /// The max Body length for create Etag
         /// </summary>
         public long BodyMaxLength { get; set; }
 
+        /// <summary>
+        /// Gets or sets the ETag algorithm.
+        /// </summary>
+        /// <value>The ETag algorithm.</value>
         public ETagAlgorithm ETagAlgorithm { get; set; }
 
+        /// <summary>
+        /// Gets or sets the ETag validator.
+        /// </summary>
+        /// <value>The ETag validator.</value>
         public ETagValidator ETagValidator { get; set; }
     }
 }
