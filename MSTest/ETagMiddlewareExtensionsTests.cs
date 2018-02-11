@@ -1,7 +1,7 @@
 using System;
 using BLun.ETagMiddleware;
 using BLun.ETagMiddleware.Middleware;
-using ETagMiddlewareTest.Common;
+using ETagMiddlewareTest.TestCommon;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;

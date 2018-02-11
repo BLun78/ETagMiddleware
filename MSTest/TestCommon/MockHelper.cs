@@ -1,13 +1,14 @@
 ﻿using System;
 using System.IO;
 using BLun.ETagMiddleware;
+using ETagMiddlewareTest.Common;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.Net.Http.Headers;
 using NSubstitute;
 
-namespace ETagMiddlewareTest.Common
+namespace ETagMiddlewareTest.TestCommon
 {
     internal static class MockHelper
     {

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 using BLun.ETagMiddleware;
-using ETagMiddlewareTest.Common;
+using ETagMiddlewareTest.TestCommon;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -10,7 +10,7 @@ using Microsoft.Net.Http.Headers;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;
 
-namespace ETagMiddlewareTest
+namespace ETagMiddlewareTest.Common
 {
     [TestClass]
     public class ETagCacheTests

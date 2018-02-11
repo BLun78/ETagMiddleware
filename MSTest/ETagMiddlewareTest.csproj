@@ -12,4 +12,9 @@
   <ItemGroup>
     <ProjectReference Include="..\ETagMiddleware\ETagMiddleware.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Attribute\" />
+    <Folder Include="Middleware\" />
+    <Folder Include="TestCommon\" />
+  </ItemGroup>
 </Project>

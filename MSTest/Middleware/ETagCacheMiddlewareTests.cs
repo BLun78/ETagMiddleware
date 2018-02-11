@@ -1,9 +1,9 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace ETagMiddlewareTest
+namespace ETagMiddlewareTest.Middleware
 {
     [TestClass]
-    public class ETagCacheActionFilterTests
+    public class ETagCacheMiddlewareTests
     { 
     }
 }
