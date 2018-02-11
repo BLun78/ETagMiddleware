@@ -28,7 +28,7 @@ namespace BLun.ETagMiddleware
     /// };  
     /// </code>
     /// </example>
-    public sealed class ETagOption
+    public class ETagOption
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="T:BLun.ETagMiddleware.ETagOption"/> class.
