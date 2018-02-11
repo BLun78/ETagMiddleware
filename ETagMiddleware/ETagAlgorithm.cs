@@ -1,4 +1,5 @@
-﻿namespace BLun.ETagMiddleware
+﻿// ReSharper disable InconsistentNaming
+namespace BLun.ETagMiddleware
 {
     /// <summary>
     /// List of supported ETag algorithmen for genrate the ETag.

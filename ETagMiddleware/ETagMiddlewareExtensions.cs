@@ -2,7 +2,6 @@
 using JetBrains.Annotations;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options;
 
 namespace BLun.ETagMiddleware
 {
@@ -42,6 +41,7 @@ namespace BLun.ETagMiddleware
         /// <param name="app"></param>
         /// <returns></returns>
         /// <exception cref="ArgumentNullException">app</exception>
+        /// <exception cref="InvalidOperationException">app.ApplicationServices.GetService(typeof(Middleware.ETagMiddleware))</exception>
         public static IApplicationBuilder UseETag([NotNull] this IApplicationBuilder app)
         {
             if (app == null) throw new ArgumentNullException(nameof(app));
@@ -127,7 +127,7 @@ namespace BLun.ETagMiddleware
             if (configuration == null) throw new ArgumentNullException(nameof(configuration));
             AddETag(services);
 
-            return services.Configure<ETagOption>((ETagOption eTagOption) => {
+            return services.Configure((ETagOption eTagOption) => {
                 eTagOption.BodyMaxLength = configuration.BodyMaxLength;
                 eTagOption.ETagValidator = configuration.ETagValidator;
                 eTagOption.ETagAlgorithm = configuration.ETagAlgorithm;

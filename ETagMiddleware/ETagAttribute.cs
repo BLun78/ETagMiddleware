@@ -82,7 +82,8 @@ namespace BLun.ETagMiddleware
         /// }
         /// </code>
         /// </example>
-        public ETagAttribute() : base()
+        // ReSharper disable once EmptyConstructor
+        public ETagAttribute()
         {
         }
 
@@ -92,11 +93,7 @@ namespace BLun.ETagMiddleware
         /// <value>The ETag algorithm.</value>
         public ETagAlgorithm ETagAlgorithm
         {
-            get
-            {
-                return _eTagAlgorithm;
-            }
-
+            get => _eTagAlgorithm;
             set
             {
                 _isSetETagAlgorithm = true;
@@ -112,11 +109,7 @@ namespace BLun.ETagMiddleware
         /// <value>The ETag validator.</value>
         public ETagValidator ETagValidator
         {
-            get
-            {
-                return _eTagValidator;
-            }
-
+            get => _eTagValidator;
             set
             {
                 _isSetETagValidator = true;
@@ -132,11 +125,7 @@ namespace BLun.ETagMiddleware
         /// <value>The max length of the body.</value>
         public long BodyMaxLength
         {
-            get
-            {
-                return _bodyMaxLength;
-            }
-
+            get => _bodyMaxLength;
             set
             {
                 _isSetBodyMaxLength = true;
@@ -147,6 +136,7 @@ namespace BLun.ETagMiddleware
         private long _bodyMaxLength;
 
         /// <inheritdoc />
+        /// <exception cref="InvalidOperationException">ILoggerFactory</exception>
         public Task OnActionExecutionAsync([NotNull] ActionExecutingContext context, [NotNull] ActionExecutionDelegate next)
         {
             var options = (IOptions<ETagOption>)context.HttpContext.RequestServices.GetService(typeof(IOptions<ETagOption>));
@@ -155,7 +145,7 @@ namespace BLun.ETagMiddleware
 
             var etagOption = new ETagOption();
 
-            if (options != null && options.Value != null)
+            if (options?.Value != null)
             {
                 etagOption.BodyMaxLength = options.Value.BodyMaxLength;
                 etagOption.ETagValidator = options.Value.ETagValidator;
@@ -175,7 +165,7 @@ namespace BLun.ETagMiddleware
                 etagOption.ETagAlgorithm = ETagAlgorithm;
             }
 
-            IAsyncActionFilter etag = new ETagCacheActionFilter(etagOption, loggerFactory.CreateLogger<ETagAttribute>());
+            IAsyncActionFilter etag = new ETagCacheActionFilter(loggerFactory.CreateLogger<ETagAttribute>(), etagOption);
 
             return etag.OnActionExecutionAsync(context, next);
         }

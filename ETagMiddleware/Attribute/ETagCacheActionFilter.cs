@@ -11,11 +11,15 @@ namespace BLun.ETagMiddleware.Attribute
 {
     internal class ETagCacheActionFilter : ETagCache, IAsyncActionFilter
     {
-        public ETagCacheActionFilter([NotNull] IOptions<ETagOption> options, [NotNull] ILogger logger) : base(options, logger)
+        public ETagCacheActionFilter(
+            [NotNull] ILogger logger,
+            [CanBeNull] IOptions<ETagOption> options) : base(logger, options)
         {
         }
 
-        public ETagCacheActionFilter([CanBeNull] ETagOption options, [NotNull] ILogger logger) : base(options, logger)
+        public ETagCacheActionFilter(
+            [NotNull] ILogger logger,
+            [CanBeNull] ETagOption options) : base(logger, options)
         {
         }
         
@@ -33,7 +37,7 @@ namespace BLun.ETagMiddleware.Attribute
                 }
                 catch (Exception e)
                 {
-                    _logger.LogError($"In BLun.ETagAttribute is an error happend! >> Exception [{e}]", e);
+                    Logger.LogError($"In BLun.ETagAttribute is an error happend! >> Exception [{e}]", e);
                 }
                 finally
                 {
@@ -57,7 +61,7 @@ namespace BLun.ETagMiddleware.Attribute
                     }
                     catch (Exception e)
                     {
-                        _logger.LogError($"In BLun.ETagAttribute is an error happend! >> Exception [{e}]", e);
+                        Logger.LogError($"In BLun.ETagAttribute is an error happend! >> Exception [{e}]", e);
                     }
                     finally
                     {

@@ -11,11 +11,15 @@ namespace BLun.ETagMiddleware.Middleware
 {
     internal class ETagCacheMiddleware : ETagCache, IMiddleware
     {
-        public ETagCacheMiddleware([NotNull] IOptions<ETagOption> options, [NotNull] ILogger logger) : base(options, logger)
+        public ETagCacheMiddleware(
+            [NotNull] ILogger logger,
+            [CanBeNull] IOptions<ETagOption> options) : base(logger, options)
         {
         }
 
-        public ETagCacheMiddleware([CanBeNull] ETagOption options, [NotNull] ILogger logger) : base(options, logger)
+        public ETagCacheMiddleware(
+            [NotNull] ILogger logger,
+            [CanBeNull] ETagOption options) : base(logger, options)
         {
         }
         
@@ -33,7 +37,7 @@ namespace BLun.ETagMiddleware.Middleware
                 }
                 catch (Exception e)
                 {
-                    _logger.LogError($"In BLun.ETagMiddleware is an error happend! >> Exception [{e}]", e);
+                    Logger.LogError($"In BLun.ETagMiddleware is an error happend! >> Exception [{e}]", e);
                 }
                 finally
                 {
@@ -57,7 +61,7 @@ namespace BLun.ETagMiddleware.Middleware
                     }
                     catch (Exception e)
                     {
-                        _logger.LogError($"In BLun.ETagMiddleware is an error happend! >> Exception [{e}]", e);
+                        Logger.LogError($"In BLun.ETagMiddleware is an error happend! >> Exception [{e}]", e);
                     }
                     finally
                     {

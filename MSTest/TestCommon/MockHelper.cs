@@ -38,7 +38,7 @@ namespace ETagMiddlewareTest.TestCommon
             };
 
             IOptions<ETagOption> options = Options.Create(etagOption);
-            var etag = new TestETagCache(options, MockHelper.CreateILoggerFactory());
+            var etag = new TestETagCache(MockHelper.CreateILoggerFactory(), options);
 
             var request = Substitute.For<HttpRequest>();
             request.Method.Returns(HttpMethods.Get);

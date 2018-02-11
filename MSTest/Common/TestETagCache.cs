@@ -10,15 +10,15 @@ namespace ETagMiddlewareTest.Common
 {
     internal sealed class TestETagCache : ETagCache
     {
-        public TestETagCache(IOptions<ETagOption> options,
-            ILoggerFactory loggerFactory)
-            : base(options,
-                loggerFactory.CreateLogger<TestETagCache>())
+        public TestETagCache(
+            ILoggerFactory loggerFactory,
+            IOptions<ETagOption> options)
+            : base(loggerFactory.CreateLogger<TestETagCache>(), options)
         {
         }
 
-        public ETagOption Options => this._options;
-        public ILogger Logger => this._logger;
+        public ETagOption BaseOptions => base.Options;
+        public ILogger BaseLogger => base.Logger;
         public void BaseManageEtag(HttpContext context, Stream ms) => base.ManageEtag(context, ms);
         public StringValues BaseGetLastModified(HttpContext context) => base.GetLastModified(context);
         public StringValues BaseGetIfModifiedSince(HttpContext context) => base.GetIfModifiedSince(context);

@@ -40,11 +40,11 @@ namespace ETagMiddlewareTest.Common
             IOptions<ETagOption> options = Options.Create(etagOption);
 
             // act
-            var etag = new TestETagCache(options, MockHelper.CreateILoggerFactory());
+            var etag = new TestETagCache(MockHelper.CreateILoggerFactory(), options);
 
             // assert
-            Assert.AreNotEqual(length, etag.Options.BodyMaxLength);
-            Assert.AreEqual(ETagMiddlewareExtensions.DefaultBodyMaxLength, etag.Options.BodyMaxLength);
+            Assert.AreNotEqual(length, etag.BaseOptions.BodyMaxLength);
+            Assert.AreEqual(ETagMiddlewareExtensions.DefaultBodyMaxLength, etag.BaseOptions.BodyMaxLength);
         }
 
         [TestMethod]
@@ -57,11 +57,11 @@ namespace ETagMiddlewareTest.Common
             IOptions<ETagOption> options = Options.Create(etagOption);
 
             // act
-            var etag = new TestETagCache(options, Substitute.For<ILoggerFactory>());
+            var etag = new TestETagCache(Substitute.For<ILoggerFactory>(), options);
 
             // assert
-            Assert.AreEqual(length, etag.Options.BodyMaxLength);
-            Assert.AreNotEqual(ETagMiddlewareExtensions.DefaultBodyMaxLength, etag.Options.BodyMaxLength);
+            Assert.AreEqual(length, etag.BaseOptions.BodyMaxLength);
+            Assert.AreNotEqual(ETagMiddlewareExtensions.DefaultBodyMaxLength, etag.BaseOptions.BodyMaxLength);
         }
 
         [TestMethod]
@@ -75,7 +75,7 @@ namespace ETagMiddlewareTest.Common
             IOptions<ETagOption> options = Options.Create(etagOption);
 
             // act
-            var etag = new TestETagCache(options, null);
+            var etag = new TestETagCache(null, options);
 
             // assert
             Assert.Fail("No Exception");
@@ -91,11 +91,11 @@ namespace ETagMiddlewareTest.Common
             IOptions<ETagOption> options = Options.Create(etagOption);
 
             // act
-            var etag = new TestETagCache(options, MockHelper.CreateILoggerFactory());
+            var etag = new TestETagCache(MockHelper.CreateILoggerFactory(), options);
 
             // assert
-            Assert.IsNotNull(etag.Logger);
-            Assert.AreEqual(length, etag.Options.BodyMaxLength);
+            Assert.IsNotNull(etag.BaseLogger);
+            Assert.AreEqual(length, etag.BaseOptions.BodyMaxLength);
         }
 
         #endregion
@@ -173,7 +173,7 @@ namespace ETagMiddlewareTest.Common
             var result = etag.BaseIsEtagSupported(context);
 
             // assert
-            Assert.AreEqual(length, etag.Options.BodyMaxLength);
+            Assert.AreEqual(length, etag.BaseOptions.BodyMaxLength);
             Assert.IsFalse(result);
         }
 

@@ -19,7 +19,7 @@ namespace ETagMiddlewareTest
             // arange
             var loggerFactory = MockHelper.CreateILoggerFactory();
             var etagOption = Substitute.For<IOptions<ETagOption>>();
-            var etagMiddleware = Substitute.For<ETagMiddleware>(etagOption, loggerFactory);
+            var etagMiddleware = Substitute.For<ETagMiddleware>(loggerFactory, etagOption);
             var app = Substitute.For<IApplicationBuilder>();
             app.ApplicationServices.Returns(Substitute.For<IServiceProvider>());
             app.ApplicationServices.GetService(typeof(ETagMiddleware)).Returns(etagMiddleware);

@@ -1,5 +1,4 @@
 ﻿using System.Threading.Tasks;
-using BLun.ETagMiddleware.Common;
 using JetBrains.Annotations;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
@@ -17,13 +16,13 @@ namespace BLun.ETagMiddleware.Middleware
         /// <summary>
         /// Initializes a new instance of the <see cref="T:BLun.ETagMiddleware.Middleware.ETagMiddleware"/> class.
         /// </summary>
-        /// <param name="options">Options.</param>
         /// <param name="loggerFactory">Logger factory.</param>
+        /// <param name="options">Options.</param>
         public ETagMiddleware(
-            [NotNull] IOptions<ETagOption> options,
-            [NotNull] ILoggerFactory loggerFactory) 
+            [NotNull] ILoggerFactory loggerFactory,
+            [CanBeNull] IOptions<ETagOption> options) 
         {
-            _etag = new ETagCacheMiddleware(options, loggerFactory.CreateLogger<ETagMiddleware>());
+            _etag = new ETagCacheMiddleware(loggerFactory.CreateLogger<ETagMiddleware>(), options);
         }
 
         /// <inheritdoc />

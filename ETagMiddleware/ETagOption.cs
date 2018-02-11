@@ -58,9 +58,9 @@ namespace BLun.ETagMiddleware
         /// </code>
         /// </example>
         public ETagOption(){
-            this.BodyMaxLength = ETagMiddlewareExtensions.DefaultBodyMaxLength;
-            this.ETagAlgorithm = ETagAlgorithm.SHA1;
-            this.ETagValidator = ETagValidator.Strong;
+            BodyMaxLength = ETagMiddlewareExtensions.DefaultBodyMaxLength;
+            ETagAlgorithm = ETagAlgorithm.SHA1;
+            ETagValidator = ETagValidator.Strong;
         }
             
         /// <summary>
