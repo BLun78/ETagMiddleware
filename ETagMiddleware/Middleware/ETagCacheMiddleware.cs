@@ -22,7 +22,7 @@ namespace BLun.ETagMiddleware.Middleware
             [CanBeNull] ETagOption options) : base(logger, options)
         {
         }
-        
+
         /// <inheritdoc />
         public async Task InvokeAsync(HttpContext context, RequestDelegate next)
         {
@@ -37,7 +37,7 @@ namespace BLun.ETagMiddleware.Middleware
                 }
                 catch (Exception e)
                 {
-                    Logger.LogError($"In BLun.ETagMiddleware is an error happend! >> Exception [{e}]", e);
+                    Logger.LogError(e, "An exception occured in BLun.ETagMiddleware! >> Exception [{e}]", e);
                 }
                 finally
                 {
@@ -61,7 +61,7 @@ namespace BLun.ETagMiddleware.Middleware
                     }
                     catch (Exception e)
                     {
-                        Logger.LogError($"In BLun.ETagMiddleware is an error happend! >> Exception [{e}]", e);
+                        Logger.LogError(e, "An exception occured in BLun.ETagMiddleware! >> Exception [{e}]", e);
                     }
                     finally
                     {

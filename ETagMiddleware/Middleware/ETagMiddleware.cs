@@ -7,7 +7,7 @@ using Microsoft.Extensions.Options;
 namespace BLun.ETagMiddleware.Middleware
 {
     /// <summary>
-    /// Enables ETag middleware for request
+    /// Enables ETag middleware for requests.
     /// </summary>
     internal class ETagMiddleware : IMiddleware
     {
@@ -20,7 +20,7 @@ namespace BLun.ETagMiddleware.Middleware
         /// <param name="options">Options.</param>
         public ETagMiddleware(
             [NotNull] ILoggerFactory loggerFactory,
-            [CanBeNull] IOptions<ETagOption> options) 
+            [CanBeNull] IOptions<ETagOption> options)
         {
             _etag = new ETagCacheMiddleware(loggerFactory.CreateLogger<ETagMiddleware>(), options);
         }

@@ -1,31 +1,30 @@
-﻿
-namespace BLun.ETagMiddleware
+﻿namespace BLun.ETagMiddleware
 {
     /// <summary>
-    /// ETag option.
+    /// ETag options.
     /// </summary>
     /// <example>
     /// Default Configuration
     /// <code>
     /// var configuration = new ETagOption()
     /// {
-    ///     // algorithmus
+    ///     // algorithms
     ///     // SHA1         = default
     ///     // SHA265
     ///     // SHA384
     ///     // SHA512
     ///     // MD5
     ///     ETagAlgorithm = ETagAlgorithm.SHA1,
-    /// 
+    ///
     ///     // etag validator
     ///     // Strong       = default
     ///     // Weak
     ///     ETagValidator = ETagValidator.Strong,
-    /// 
+    ///
     ///     // body content length
     ///     // 40 * 1024    = default
     ///     BodyMaxLength = 40 * 1024
-    /// };  
+    /// };
     /// </code>
     /// </example>
     public class ETagOption
@@ -38,33 +37,34 @@ namespace BLun.ETagMiddleware
         /// <code>
         /// var configuration = new ETagOption()
         /// {
-        ///     // algorithmus
+        ///     // algorithms
         ///     // SHA1         = default
         ///     // SHA265
         ///     // SHA384
         ///     // SHA512
         ///     // MD5
         ///     ETagAlgorithm = ETagAlgorithm.SHA1,
-        /// 
+        ///
         ///     // etag validator
         ///     // Strong       = default
         ///     // Weak
         ///     ETagValidator = ETagValidator.Strong,
-        /// 
+        ///
         ///     // body content length
         ///     // 40 * 1024    = default
         ///     BodyMaxLength = 40 * 1024
-        /// };  
+        /// };
         /// </code>
         /// </example>
-        public ETagOption(){
+        public ETagOption()
+        {
             BodyMaxLength = ETagMiddlewareExtensions.DefaultBodyMaxLength;
             ETagAlgorithm = ETagAlgorithm.SHA1;
             ETagValidator = ETagValidator.Strong;
         }
-            
+
         /// <summary>
-        /// The max Body length for create Etag
+        /// Gets or sets the maximum body length to create an ETag for.
         /// </summary>
         public long BodyMaxLength { get; set; }
 

@@ -10,7 +10,7 @@ namespace BLun.ETagMiddleware
 {
     /// <summary>
     /// ETag ActionFilter attribute for MVC.
-    /// AttributeTargets are CLass and Method
+    /// AttributeTargets are Class and Method.
     /// </summary>
     /// <example>
     /// How to use:
@@ -19,26 +19,26 @@ namespace BLun.ETagMiddleware
     /// [ETag()]
     /// public class HomeController : Controller
     /// {
-    /// 
+    ///
     ///     public IActionResult Index()
     ///     {
     ///         return View();
     ///     }
-    /// 
+    ///
     ///     // Can add on methods
     ///     [ETag(ETagValidator = ETagValidator.Weak)]
     ///     public IActionResult About()
     ///     {
     ///         ViewData["Message"] = "Your application description page.";
-    /// 
+    ///
     ///         return View();
     ///     }
-    /// 
+    ///
     ///     [ETag(ETagValidator = ETagValidator.Strong, BodyMaxLength = 30 * 1024, ETagAlgorithm = ETagAlgorithm.SHA384)]
     ///     public IActionResult Contact()
     ///     {
     ///         ViewData["Message"] = "Your contact page.";
-    /// 
+    ///
     ///         return View();
     ///     }
     /// }
@@ -57,26 +57,26 @@ namespace BLun.ETagMiddleware
         /// [ETag()]
         /// public class HomeController : Controller
         /// {
-        /// 
+        ///
         ///     public IActionResult Index()
         ///     {
         ///         return View();
         ///     }
-        /// 
+        ///
         ///     // Can add on methods
         ///     [ETag(ETagValidator = ETagValidator.Weak)]
         ///     public IActionResult About()
         ///     {
         ///         ViewData["Message"] = "Your application description page.";
-        /// 
+        ///
         ///         return View();
         ///     }
-        /// 
+        ///
         ///     [ETag(ETagValidator = ETagValidator.Strong, BodyMaxLength = 30 * 1024, ETagAlgorithm = ETagAlgorithm.SHA384)]
         ///     public IActionResult Contact()
         ///     {
         ///         ViewData["Message"] = "Your contact page.";
-        /// 
+        ///
         ///         return View();
         ///     }
         /// }
@@ -100,6 +100,7 @@ namespace BLun.ETagMiddleware
                 _eTagAlgorithm = value;
             }
         }
+
         private bool _isSetETagAlgorithm;
         private ETagAlgorithm _eTagAlgorithm;
 
@@ -116,6 +117,7 @@ namespace BLun.ETagMiddleware
                 _eTagValidator = value;
             }
         }
+
         private bool _isSetETagValidator;
         private ETagValidator _eTagValidator;
 
@@ -132,6 +134,7 @@ namespace BLun.ETagMiddleware
                 _bodyMaxLength = value;
             }
         }
+
         private bool _isSetBodyMaxLength;
         private long _bodyMaxLength;
 
