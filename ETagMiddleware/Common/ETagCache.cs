@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using System.Security.Cryptography;
-using System.Text.RegularExpressions;
 using JetBrains.Annotations;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.WebUtilities;
@@ -69,7 +69,8 @@ namespace BLun.ETagMiddleware.Common
 
                 string etag = CreateETagAndAddToHeader(context, ms);
 
-                CheckETagAndSetHttpStatusCode(context, ifNoneMatch.ToString(), etag);
+                //There can be multiple values in an If-None-Match header (https://tools.ietf.org/html/rfc7232#page-14).
+                CheckETagAndSetHttpStatusCode(context, ifNoneMatch, etag);
             }
         }
 
@@ -129,10 +130,9 @@ namespace BLun.ETagMiddleware.Common
             return etag;
         }
 
-        protected void CheckETagAndSetHttpStatusCode([NotNull] HttpContext context, [CanBeNull] string requestEtag, [NotNull] string etag)
+        protected void CheckETagAndSetHttpStatusCode([NotNull] HttpContext context, [CanBeNull] StringValues requestEtag, [NotNull] string etag)
         {
-            if (!string.IsNullOrWhiteSpace(etag)
-                && etag.Equals(requestEtag))
+            if (requestEtag.Contains(etag, StringComparer.OrdinalIgnoreCase))
             {
                 Logger.LogInformation($"Response StatusCode is set to 304 (If-None-Match == ETag [{etag}])");
                 context.Response.StatusCode = StatusCodes.Status304NotModified;
@@ -147,7 +147,8 @@ namespace BLun.ETagMiddleware.Common
             {
                 return false;
             }
-            return !Regex.IsMatch(cacheControl, @"^((?!no-cache).)*$");
+            //https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Cache-Control#Syntax
+            return cacheControl.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries).Select(_ => _.Trim()).Contains("no-cache", StringComparer.OrdinalIgnoreCase);
         }
 
         protected string GetResponseHash()
