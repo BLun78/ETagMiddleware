@@ -1,15 +1,11 @@
 # ETagMiddleware
-[ETag](https://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.19) Middleware for [Asp.Net Core -.NetStandard 2.0](https://docs.microsoft.com/aspnet/core/)
-Is supports Caching with Http Request Header 'If-None-Match' with Http Respons Header 'ETag' and set the HttpStatus tu 304. Http Request Header 'Cache-Controle' with 'no-cache' is integrated and would set the HttpStatus to 200.
+[ETag](https://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.19) Middleware for [ASP.NET Core](https://docs.microsoft.com/aspnet/core/) using [.NET Standard 2.0](https://docs.microsoft.com/en-us/dotnet/standard/net-standard) to automatically insert an 'ETag' response header and check 'If-None-Match' request headers, setting the response status to 304 if there is a match. 'Cache-Control: no-cache' request headers are respected.
 
 ## Inspiration
-I was inspired by Mads Kristensen 
-[Blog](https://madskristensen.net/blog/send-etag-headers-in-aspnet-core/). The Example from him, can you find here as 
-[code](https://gist.github.com/madskristensen/36357b1df9ddbfd123162cd4201124c4).
-Thanks for your artikle!
+I was inspired by [Mads Kristensen's Blog](https://madskristensen.net/blog/send-etag-headers-in-aspnet-core/). His example code [can be found here](https://gist.github.com/madskristensen/36357b1df9ddbfd123162cd4201124c4). Thanks for your article!
 
 ## Requirements
-.NETStandard2.0
+.NET Standard 2.0
 
 ## Install
 Download from [Nuget.org](https://www.nuget.org/packages/BLun.ETagMiddleware/)
@@ -19,10 +15,20 @@ Download from [Nuget.org](https://www.nuget.org/packages/BLun.ETagMiddleware/)
 }
 ```
 
-## Featurs
- - BLun.ETagMiddleware for Asp.Net Core Http
+Package Manager Console
+```
+Install-Package BLun.ETagMiddleware -Version <version>
+```
+
+.NET CLI
+```
+dotnet add package BLun.ETagMiddleware --version <version>
+```
+
+## Features
+ - BLun.ETagMiddleware for ASP.NET Core Http
     - Microsoft.AspNetCore.Http.IMiddleware
- - BLun.ETagAttribute for Asp.Net Core Mvc
+ - BLun.ETagAttribute for ASP.NET Core Mvc
     - Microsoft.AspNetCore.Mvc.Filters.IAsyncActionFilter
  - Supports 
     - Microsoft.Extensions.Logging
@@ -32,7 +38,7 @@ Download from [Nuget.org](https://www.nuget.org/packages/BLun.ETagMiddleware/)
 
 ## Usage as Middleware (Microsoft.AspNetCore.Http.IMiddleware)
 
-The default usage are:
+The default usage is:
 ```c# 
 using BLun.ETagMiddleware;
 
@@ -43,7 +49,7 @@ public void ConfigureServices(IServiceCollection services)
 
     // Required
     // Add a Middleware for each Controller Request with
-    // algorithmus          = SHA1      = default
+    // algorithms           = SHA1      = default
     // etag validator       = Strong    = default
     // body content length  = 40 * 1024 = default
     services.AddETag();
@@ -67,7 +73,7 @@ public void Configure(IApplicationBuilder app, IHostingEnvironment env)
 }
 ```
 
-You can configuratione your own option prameters:
+You can configure your own options:
 
 ```c# 
 using BLun.ETagMiddleware;
@@ -81,7 +87,7 @@ public void ConfigureServices(IServiceCollection services)
     // Add ETagOption with own global configurations
     services.AddETag(new ETagOption()
     {
-        // algorithmus
+        // algorithms
         // SHA1         = default
         // SHA265
         // SHA384
@@ -131,7 +137,7 @@ public void ConfigureServices(IServiceCollection services)
     // Add ETagOption with own global configurations
     services.AddETag(new ETagOption()
     {
-        // algorithmus
+        // algorithms
         // SHA1         = default
         // SHA265
         // SHA384
@@ -203,8 +209,8 @@ public class HomeController : Controller
 }
 ```
 
-## Unittested
-The Code is unittestet.
+## Unit Testing
+The Code is unit tested.
 
 ## Vision
-I would develope muche more test for it.
+I would develop many more tests for it.

@@ -6,17 +6,17 @@ using Microsoft.Extensions.DependencyInjection;
 namespace BLun.ETagMiddleware
 {
     /// <summary>
-    /// Extension methods for the ETagMiddleware
+    /// Extension methods for the ETagMiddleware.
     /// </summary>
     public static class ETagMiddlewareExtensions
     {
         /// <summary>
-        /// Default max Body length for Etag
+        /// Default maximum body length to create an ETag for.
         /// </summary>
         public static long DefaultBodyMaxLength => 40 * 1024;
 
         /// <summary>
-        /// Enable Etag handshake with given option
+        /// Enable ETag handshake with the given options.
         /// </summary>
         /// <example>
         /// <code>
@@ -24,11 +24,11 @@ namespace BLun.ETagMiddleware
         /// public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         /// {
         ///     app.UseStaticFiles();
-        /// 
+        ///
         ///     // Add a Middleware for each Controller Request
-        ///     // Atention: add app.UseETag after app.UseStaticFiles, the order is important
+        ///     // Attention: add app.UseETag after app.UseStaticFiles, the order is important
         ///     app.UseETag();
-        /// 
+        ///
         ///     app.UseMvc(routes =>
         ///     {
         ///         routes.MapRoute(
@@ -45,8 +45,9 @@ namespace BLun.ETagMiddleware
         public static IApplicationBuilder UseETag([NotNull] this IApplicationBuilder app)
         {
             if (app == null) throw new ArgumentNullException(nameof(app));
-            if (null == app.ApplicationServices.GetService(typeof(Middleware.ETagMiddleware))) {
-                throw new InvalidOperationException("No service for type 'BLun.ETagMiddleware.ETagMiddleware' has been registered. Add [services.AddETag()] in the method [public void ConfigureServices(IServiceCollection services)]");
+            if (null == app.ApplicationServices.GetService(typeof(Middleware.ETagMiddleware)))
+            {
+                throw new InvalidOperationException("No service for type 'BLun.ETagMiddleware.ETagMiddleware' has been registered. Add [services.AddETag()] in the method [public void ConfigureServices(IServiceCollection services)].");
             }
 
             return app.UseMiddleware<Middleware.ETagMiddleware>();
@@ -62,10 +63,10 @@ namespace BLun.ETagMiddleware
         /// public void ConfigureServices(IServiceCollection services)
         /// {
         ///     services.AddMvc();
-        /// 
+        ///
         ///     // Required
         ///     // Add a Middleware for each Controller Request with
-        ///     // algorithmus          = SHA1      = default
+        ///     // algorithms           = SHA1      = default
         ///     // etag validator       = Strong    = default
         ///     // body content length  = 40 * 1024 = default
         ///     services.AddETag();
@@ -94,24 +95,24 @@ namespace BLun.ETagMiddleware
         /// public void ConfigureServices(IServiceCollection services)
         /// {
         ///     services.AddMvc();
-        /// 
+        ///
         ///     // Required
         ///     // Add ETagOption with own global configurations
         ///     services.AddETag(new ETagOption()
         ///     {
-        ///         // algorithmus
+        ///         // algorithms
         ///         // SHA1         = default
         ///         // SHA265
         ///         // SHA384
         ///         // SHA512
         ///         // MD5
         ///         ETagAlgorithm = ETagAlgorithm.SHA265,
-        /// 
+        ///
         ///         // etag validator
         ///         // Strong       = default
         ///         // Weak
         ///         ETagValidator = ETagValidator.Weak,
-        /// 
+        ///
         ///         // body content length
         ///         // 40 * 1024    = default
         ///         BodyMaxLength = 20 * 1024
@@ -123,11 +124,13 @@ namespace BLun.ETagMiddleware
         /// <param name="services">Services.</param>
         /// <param name="configuration">youre own Configuration.</param>
         /// <exception cref="ArgumentNullException">services and configuration</exception>
-        public static IServiceCollection AddETag([NotNull] this IServiceCollection services, [NotNull] ETagOption configuration){
+        public static IServiceCollection AddETag([NotNull] this IServiceCollection services, [NotNull] ETagOption configuration)
+        {
             if (configuration == null) throw new ArgumentNullException(nameof(configuration));
             AddETag(services);
 
-            return services.Configure((ETagOption eTagOption) => {
+            return services.Configure((ETagOption eTagOption) =>
+            {
                 eTagOption.BodyMaxLength = configuration.BodyMaxLength;
                 eTagOption.ETagValidator = configuration.ETagValidator;
                 eTagOption.ETagAlgorithm = configuration.ETagAlgorithm;
