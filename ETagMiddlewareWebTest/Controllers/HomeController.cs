@@ -24,7 +24,7 @@ namespace ETagMiddlewareWebTest.Controllers
             return View();
         }
 
-        [ETag(ETagAlgorithm = ETagAlgorithm.SHA521)]
+        [ETag(ETagAlgorithm = ETagAlgorithm.SHA512)]
         public IActionResult Contact()
         {
             ViewData["Message"] = "Your contact page.";
