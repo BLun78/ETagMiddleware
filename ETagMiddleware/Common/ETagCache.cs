@@ -169,7 +169,7 @@ namespace BLun.ETagMiddleware.Common
                     {
                         return CreateHash(algo, inputStream);
                     }
-                case ETagAlgorithm.SHA265:
+                case ETagAlgorithm.SHA256:
                     using (var algo = SHA256.Create())
                     {
                         return CreateHash(algo, inputStream);
@@ -179,7 +179,7 @@ namespace BLun.ETagMiddleware.Common
                     {
                         return CreateHash(algo, inputStream);
                     }
-                case ETagAlgorithm.SHA521:
+                case ETagAlgorithm.SHA512:
                     using (var algo = SHA512.Create())
                     {
                         return CreateHash(algo, inputStream);

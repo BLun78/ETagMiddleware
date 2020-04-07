@@ -33,7 +33,7 @@ namespace ETagMiddlewareTest.TestCommon
             ETagOption etagOption = new ETagOption()
             {
                 BodyMaxLength = length,
-                ETagAlgorithm = ETagAlgorithm.SHA521,
+                ETagAlgorithm = ETagAlgorithm.SHA512,
                 ETagValidator = ETagValidator.Strong
             };
 

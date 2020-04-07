@@ -100,12 +100,12 @@ namespace BLun.ETagMiddleware
         ///     services.AddETag(new ETagOption()
         ///     {
         ///         // algorithmus
+        ///         // MD5
         ///         // SHA1         = default
-        ///         // SHA265
+        ///         // SHA256
         ///         // SHA384
         ///         // SHA512
-        ///         // MD5
-        ///         ETagAlgorithm = ETagAlgorithm.SHA265,
+        ///         ETagAlgorithm = ETagAlgorithm.SHA256,
         /// 
         ///         // etag validator
         ///         // Strong       = default
