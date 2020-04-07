@@ -26,7 +26,7 @@ namespace ETagMiddlewareTest.Common
         public StringValues BaseGetCacheControl(HttpContext context) => base.GetCacheControl(context);
         public string BaseCreateETagAndAddToHeader(HttpContext context, Stream ms)
             => base.CreateETagAndAddToHeader(context, ms);
-        public void BaseCheckETagAndSetHttpStatusCode(HttpContext context, string requestEtag, string etag)
+        public void BaseCheckETagAndSetHttpStatusCode(HttpContext context, StringValues requestEtag, string etag)
             => base.CheckETagAndSetHttpStatusCode(context, requestEtag, etag);
         public bool BaseIsNoCacheRequest(HttpContext context) => base.IsNoCacheRequest(context);
         public string BaseGetResponseHash() => base.GetResponseHash();
