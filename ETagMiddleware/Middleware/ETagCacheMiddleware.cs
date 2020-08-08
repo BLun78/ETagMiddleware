@@ -7,9 +7,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
-
 #if NETSTANDARD1_3
-using IMiddleware = Blun.Microsoft.AspNetCore.Http.IMiddleware;
+    using IMiddleware = BLun.ETagMiddleware.Middleware.Microsoft.AspNetCore.Http.IMiddleware;
 #endif
 
 namespace BLun.ETagMiddleware.Middleware

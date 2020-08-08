@@ -15,12 +15,12 @@
     <PackageReleaseNotes>Is supports Caching with Http Request Header 'If-None-Match' with Http Respons Header 'ETag' and set the HttpStatus tu 304. Http Request Header 'Cache-Controle' with 'no-cache' is integrated and would set the HttpStatus to 200.</PackageReleaseNotes>
     <PackageProjectUrl>https://github.com/BLun78/ETagMiddleware</PackageProjectUrl>
     <PackageTags>ETag If-None-Match If-Modified-Since 304 Cache-Controle AspNetCore MVC6 Middleware .NETStandard2.0</PackageTags>
-    <Copyright>Copyright 2018 (c) Björn Lundström, Germany. All rights reserved.</Copyright>
-    <PackageVersion>1.2.2</PackageVersion>
-    <PackageVersionPrefix>1.2.2</PackageVersionPrefix>
+    <Copyright>Copyright 2018-2020 (c) Björn Lundström, Germany. All rights reserved.</Copyright>
+    <PackageVersion>1.3.0</PackageVersion>
+    <PackageVersionPrefix>1.3.0</PackageVersionPrefix>
     <PackageVersionSuffix>
     </PackageVersionSuffix>
-    <Version>1.2.2</Version>
+    <Version>1.3.0</Version>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>ETagMiddleware.snk</AssemblyOriginatorKeyFile>
     <DelaySign>true</DelaySign>
@@ -33,7 +33,7 @@
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DocumentationFile>bin\Debug\$(TargetFramework)\ETagMiddleware.xml</DocumentationFile>
-    <DefineConstants>TRACE;NETSTANDARD2_0;</DefineConstants>
+    <DefineConstants>TRACE;NETSTANDARD1_3;</DefineConstants>
   </PropertyGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
@@ -65,7 +65,6 @@
   <ItemGroup>
     <Folder Include="Common\" />
     <Folder Include="Attribute\" />
-    <Folder Include="Middleware\" />
   </ItemGroup>
   <ItemGroup>
     <Compile Remove="Common\ETag.cs" />
