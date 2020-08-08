@@ -1,10 +1,10 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+  <TargetFrameworks>netstandard1.3;netstandard2.0;</TargetFrameworks>
     <LangVersion>7.1</LangVersion>
     <RootNamespace>BLun.ETagMiddleware</RootNamespace>
-    <Description>ETag Middleware for Asp.Net Core MVC6 for .NetStandard 2.0</Description>
-    <PackOnBuild>true</PackOnBuild>
+    <Description>ETag Middleware for Asp.Net Core MVC for .NetStandard 1.3, .NetStandard 2.0</Description>
+    <PackOnBuild>false</PackOnBuild>
     <PackageId>BLun.ETagMiddleware</PackageId>
     <Title>BLun.ETagMiddleware</Title>
     <PackageLicenseUrl>http://opensource.org/licenses/MIT</PackageLicenseUrl>
@@ -21,28 +21,47 @@
     <PackageVersionSuffix>
     </PackageVersionSuffix>
     <Version>1.2.2</Version>
+    <SignAssembly>true</SignAssembly>
+    <AssemblyOriginatorKeyFile>ETagMiddleware.snk</AssemblyOriginatorKeyFile>
+    <DelaySign>true</DelaySign>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DocumentationFile>bin\Release\netstandard2.0\ETagMiddleware.xml</DocumentationFile>
+    <DocumentationFile>bin\Release\$(TargetFramework)\ETagMiddleware.xml</DocumentationFile>
     <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
     <DebugSymbols>true</DebugSymbols>
+    <DefineConstants>TRACE;NETSTANDARD2_0</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DocumentationFile>bin\Debug\netstandard2.0\ETagMiddleware.xml</DocumentationFile>
+    <DocumentationFile>bin\Debug\$(TargetFramework)\ETagMiddleware.xml</DocumentationFile>
+    <DefineConstants>TRACE;NETSTANDARD2_0;</DefineConstants>
   </PropertyGroup>
-  <ItemGroup>
-    <PackageReference Include="JetBrains.Annotations" Version="11.1.0">
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
+    <PackageReference Include="JetBrains.Annotations" Version="2020.1.0">
       <PrivateAssets>All</PrivateAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.0.1" />
-    <PackageReference Include="Microsoft.AspNetCore.WebUtilities" Version="2.0.1" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="2.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Options" Version="2.0.0" />
-    <PackageReference Include="Microsoft.Net.Http.Headers" Version="2.0.1" />
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.Abstractions" Version="2.0.0" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="2.0.0" />
-    <PackageReference Include="NuGet.Build.Packaging" Version="0.2.2" />
+    <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.2.0" />
+    <PackageReference Include="Microsoft.AspNetCore.WebUtilities" Version="2.2.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="3.1.6" />
+    <PackageReference Include="Microsoft.Extensions.Options" Version="3.1.6" />
+    <PackageReference Include="Microsoft.Net.Http.Headers" Version="2.2.8" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Abstractions" Version="2.2.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="3.1.6" />
   </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard1.3'">
+    <PackageReference Include="JetBrains.Annotations" Version="2020.1.0">
+      <PrivateAssets>All</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="1.1.2" />
+    <PackageReference Include="Microsoft.AspNetCore.WebUtilities" Version="1.1.2" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="1.1.2" />
+    <PackageReference Include="Microsoft.Extensions.Options" Version="1.1.2" />
+    <PackageReference Include="Microsoft.Net.Http.Headers" Version="1.1.2" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Abstractions" Version="1.1.8" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="1.1.1" />
+  </ItemGroup>
+  
   <ItemGroup>
     <Folder Include="Common\" />
     <Folder Include="Attribute\" />

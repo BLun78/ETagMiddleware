@@ -2,6 +2,8 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.0</TargetFramework>
+    <SignAssembly>true</SignAssembly>
+    <AssemblyOriginatorKeyFile>ETagMiddleware.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
 
   <ItemGroup>

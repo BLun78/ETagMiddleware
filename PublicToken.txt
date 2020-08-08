@@ -1,0 +1,13 @@
+
+Microsoft (R) .NET Framework-Dienstprogramm fÅr starke Namen
+Version 3.5.30729.1
+Copyright (c) Microsoft Corporation. Alle Rechte vorbehalten.
+
+ôffentlicher SchlÅssel: 
+002400000480000094000000060200000024000052534131000400000100010025540a3dd2b4b4
+af0f1686b29796a16eb8934026db9cb17ba2107c9bb646f5061576d6505c904efb0348562069f1
+6b84331e6ba1f87c4c06d3b449a24d4cb82472e53519b6eee030ce48aa7f669ff6f2865b6b27a1
+224de9f0905b86b8d3120b08f277dcb2fb47476250eeae52f3863ad42cf7abbec197841c09bf57
+1acedcd9
+.
+ôffentliches SchlÅsseltoken: 6d69d9c1d387ef51
